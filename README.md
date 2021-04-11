@@ -9,4 +9,4 @@
 ![редактор](https://user-images.githubusercontent.com/55639594/114314822-f6ef8980-9b04-11eb-85e9-194d8ffe9757.jpg)
 # Команда разработчиков
 1. Дорошенко Илья Викторович - [fickmann](https://github.com/fickmann)
-2. Карпенков Роман Андреевич - [warnachinka](https://github.com/warnachi
+2. Карпенков Роман Андреевич - [warnachinka](https://github.com/warnachinka)
