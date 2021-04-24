@@ -1,6 +1,19 @@
 import tkinter as tk
-from tkinter.filedialog import askopenfilename
+from tkinter.filedialog import askopenfilename, asksaveasfilename
 
+
+def save_as():
+    """Saves the current file as new"""
+    path_to_file = asksaveasfilename(
+            defaultextension=".txt",
+            filetypes=[("Text files","*.txt"),("All files", "*.*")]
+    )
+    if not path_to_file:
+        return
+    with open(path_to_file, "w") as output_file:
+        text = txt_edit.get("1.0", tk.END)
+        output_file.write(text)
+    window.title(f"Gavrix - {path_to_file}")
 
 def file_open():
     """Opens the file that user wants to edit"""
@@ -26,7 +39,7 @@ fr_buttons = tk.Frame(window)
 
 btn_open = tk.Button(fr_buttons, text="Open", command = file_open)
 btn_save = tk.Button(fr_buttons, text="Save")
-btn_save_as = tk.Button(fr_buttons, text="Save As")
+btn_save_as = tk.Button(fr_buttons, text="Save As", command = save_as)
 close = tk.Button(fr_buttons, text="Close")
 
 btn_open.grid(row=0, column=0, sticky="ew", padx=5, pady=5)
