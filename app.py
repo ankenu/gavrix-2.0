@@ -2,6 +2,9 @@ import tkinter as tk
 from tkinter.filedialog import askopenfilename, asksaveasfilename
 
 
+path_to_file = "NewFile.txt"
+text = ""
+
 def save_as():
     """Saves the current file as new"""
     path_to_file = asksaveasfilename(
@@ -27,9 +30,16 @@ def file_open():
         text = input_file.read()
         txt_edit.insert(tk.END, text)
     window.title(f"Gavrix - {path_to_file}")
+
+def file_close():
+    path_to_file = "NewFile.txt"
+    text = ""
+    txt_edit.delete("1.0", tk.END)
+    window.title(f"Gavrix - {path_to_file}")
+    
  
 window = tk.Tk()
-window.title("Gavrix")
+window.title(f"Gavrix - {path_to_file}")
  
 window.rowconfigure(0, minsize=640, weight=1)
 window.columnconfigure(1, minsize=800, weight=1)
@@ -51,7 +61,7 @@ scale_option.set(scale_option_list[3])
 btn_open = tk.Button(fr_buttons, text="Open", command = file_open)
 btn_save = tk.Button(fr_buttons, text="Save")
 btn_save_as = tk.Button(fr_buttons, text="Save As", command = save_as)
-close = tk.Button(fr_buttons, text="Close")
+close = tk.Button(fr_buttons, text="Close", command = file_close)
 
 scale = tk.OptionMenu(fr_buttons, scale_option, *scale_option_list)
 scale.config(width=1)
