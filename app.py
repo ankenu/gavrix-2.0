@@ -5,6 +5,21 @@ from tkinter.filedialog import askopenfilename, asksaveasfilename
 path_to_file = "NewFile.txt"
 text = ""
 
+
+def change_scale(*args):
+    if scale_option.get() == scale_option_list[0]:
+        txt_edit.config(font=('Helvetica', 4))
+    elif scale_option.get() == scale_option_list[1]:
+        txt_edit.config(font=('Helvetica', 8))
+    elif scale_option.get() == scale_option_list[2]:
+        txt_edit.config(font=('Helvetica', 12))
+    elif scale_option.get() == scale_option_list[3]:
+        txt_edit.config(font=('Helvetica', 16))
+    elif scale_option.get() == scale_option_list[4]:
+        txt_edit.config(font=('Helvetica', 20))
+
+    txt_edit.insert(tk.END, "")
+
 def save_as():
     """Saves the current file as new"""
     path_to_file = asksaveasfilename(
@@ -36,8 +51,7 @@ def file_close():
     text = ""
     txt_edit.delete("1.0", tk.END)
     window.title(f"Gavrix - {path_to_file}")
-    
- 
+
 window = tk.Tk()
 window.title(f"Gavrix - {path_to_file}")
  
@@ -56,7 +70,7 @@ scale_option_list = [
 ]
 
 scale_option=tk.StringVar(window)
-scale_option.set(scale_option_list[3])
+scale_option.set(scale_option_list[2])
 
 btn_open = tk.Button(fr_buttons, text="Open", command = file_open)
 btn_save = tk.Button(fr_buttons, text="Save")
@@ -65,6 +79,8 @@ close = tk.Button(fr_buttons, text="Close", command = file_close)
 
 scale = tk.OptionMenu(fr_buttons, scale_option, *scale_option_list)
 scale.config(width=1)
+
+scale_option.trace("w", change_scale)
 
 btn_open.grid(row=0, column=0, sticky="ew", padx=5, pady=5)
 btn_save.grid(row=1, column=0, sticky="ew", padx=5)
