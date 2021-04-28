@@ -58,7 +58,7 @@ window.title(f"Gavrix - {path_to_file}")
 window.rowconfigure(0, minsize=640, weight=1)
 window.columnconfigure(1, minsize=800, weight=1)
 
-txt_edit = tk.Text(window, undo=True, font='fixed', borderwidth=2, relief='groove')
+txt_edit = tk.Text(window, undo=True, width = 50, height = 20, font='fixed', borderwidth=2, relief='groove')
 fr_buttons = tk.Frame(window)
 
 scale_option_list = [
