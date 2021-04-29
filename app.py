@@ -14,6 +14,7 @@ class Application(tk.Frame):
         self.txt_edit = tk.Text(self, undo=True, width=40, height=15, font='fixed', borderwidth=2, relief='groove')
         self.fr_buttons = tk.Frame(self)
 
+        self.is_on = True
         self.scale_option_list = ["25%", "50%", "75%", "100%", "125%"]
 
         self.scale_option = tk.StringVar(self)
@@ -26,12 +27,15 @@ class Application(tk.Frame):
         self.btn_save = tk.Button(self.fr_buttons, text="Save")
         self.btn_save_as = tk.Button(self.fr_buttons, text="Save As", command=self.save_as)
         self.close = tk.Button(self.fr_buttons, text="Close", command=self.file_close)
+        self.line_num = tk.Button(self.fr_buttons, text="Line numbers: On", command=self.switch)
+        self.line_num.config(width=14)
 
         self.btn_open.grid(row=0, column=0, sticky="ew", padx=5, pady=5)
         self.btn_save.grid(row=1, column=0, sticky="ew", padx=5)
         self.btn_save_as.grid(row=1, column=1, sticky="ew", padx=5)
         self.close.grid(row=2, column=0, sticky="ew", padx=5, pady=5)
         self.scale.grid(row=2, column=1, sticky="ew", padx=5, pady=5)
+        self.line_num.grid(row=3, column=0, sticky="ew", padx=5)
         self.fr_buttons.grid(row=0, column=0, sticky="ns")
         self.txt_edit.grid(row=0, column=1, sticky="nsew")
 
@@ -48,6 +52,15 @@ class Application(tk.Frame):
             self.txt_edit.config(font=('Helvetica', 20))
 
         self.txt_edit.insert(tk.END, "")
+
+    def switch(self):
+        """Toggles the button state"""
+        if self.is_on:
+            self.line_num.config(text="Line numbers: Off")
+            self.is_on = False
+        else:
+            self.line_num.config(text="Line numbers: On")
+            self.is_on = True
 
     def save_as(self):
         """Saves the current file as new"""
