@@ -42,6 +42,9 @@ class Application(tk.Frame):
         self.txt_edit = CustomText(self, width=40, height=15, font='fixed')
         self.fr_buttons = tk.Frame(self)
 
+        self.scroll = tk.Scrollbar(self, orient="vertical", command=self.txt_edit.yview)
+        self.txt_edit.configure(yscrollcommand=self.scroll.set)
+
         self.is_on = True
         self.scale_option_list = ["25%", "50%", "75%", "100%", "125%"]
 
@@ -66,6 +69,7 @@ class Application(tk.Frame):
         self.line_num.grid(row=3, column=0, sticky="ew", padx=5)
         self.fr_buttons.grid(row=0, column=0, sticky="ns")
         self.txt_edit.grid(row=0, column=1, sticky="nsew")
+        self.scroll.grid(row=0, column=2,sticky="ns")
 
     def change_scale(self, *args):
         """Changes the font size of the whole document, supports 5 different sizes"""
