@@ -2,10 +2,9 @@ import tkinter as tk
 from tkinter.filedialog import askopenfilename, asksaveasfilename
 
 class CustomText(tk.Text):
-    def init(self, *args, **kwargs):
-        """Creates a proxy for the underlying widget"""
-        tk.Text.init(self, *args, **kwargs)
-        
+    def __init__(self, *args, **kwargs):
+        tk.Text.__init__(self, *args, **kwargs)
+           
         self._orig = self._w + "_orig"
         self.tk.call("rename", self._w, self._orig)
         self.tk.createcommand(self._w, self._proxy)
@@ -29,21 +28,44 @@ class CustomText(tk.Text):
 
         return result
 
+class TextLineNumbers(tk.Canvas):
+    def __init__(self, *args, **kwargs):
+        tk.Canvas.__init__(self, *args, **kwargs)
+        self.textwidget = None
+
+    def attach(self, text_widget):
+        self.textwidget = text_widget
+        
+    def redraw(self, *args):
+        '''redraw line numbers'''
+        self.delete("all")
+
+        i = self.textwidget.index("@0,0")
+        while True :
+            dline= self.textwidget.dlineinfo(i)
+            if dline is None: break
+            y = dline[1]
+            linenum = str(i).split(".")[0]
+            self.create_text(2,y,anchor="nw", text=linenum)
+            i = self.textwidget.index("%s+1line" % i)
+
 class Application(tk.Frame):
     def __init__(self, master=None, title="<application>", **kwargs):
         super().__init__(master, **kwargs)
         self.master.title(title)
-        self.rowconfigure(0, minsize=640, weight=1)
-        self.columnconfigure(1, minsize=800, weight=1)
+
         self.grid(sticky = "news")
         self.createWidgets()
     
     def createWidgets(self):
-        self.txt_edit = CustomText(self, width=40, height=15, font='fixed')
+        self.txt_edit = CustomText(self)
+        self.scrollbar = tk.Scrollbar(self, orient="vertical", command=self.txt_edit.yview)
+        self.txt_edit.configure(yscrollcommand=self.scrollbar.set)
+        
+        self.linenumbers = TextLineNumbers(self, width=30)
+        self.linenumbers.attach(self.txt_edit)
+        
         self.fr_buttons = tk.Frame(self)
-
-        self.scroll = tk.Scrollbar(self, orient="vertical", command=self.txt_edit.yview)
-        self.txt_edit.configure(yscrollcommand=self.scroll.set)
 
         self.is_on = True
         self.scale_option_list = ["25%", "50%", "75%", "100%", "125%"]
@@ -68,8 +90,16 @@ class Application(tk.Frame):
         self.scale.grid(row=2, column=1, sticky="ew", padx=5, pady=5)
         self.line_num.grid(row=3, column=0, sticky="ew", padx=5)
         self.fr_buttons.grid(row=0, column=0, sticky="ns")
-        self.txt_edit.grid(row=0, column=1, sticky="nsew")
-        self.scroll.grid(row=0, column=2,sticky="ns")
+        self.txt_edit.grid(row=0, column=2, sticky="nsew")
+        self.scrollbar.grid(row=0, column=3, sticky='ns')
+        self.linenumbers.grid(row=0, column=1, sticky="nsew")
+
+        self.txt_edit.bind("<<Change>>", self.linenumbers_change)
+        self.txt_edit.bind("<Configure>", self.linenumbers_change)
+        
+    def linenumbers_change(self, event):
+        """Redraws the line numbering"""
+        self.linenumbers.redraw()
 
     def change_scale(self, *args):
         """Changes the font size of the whole document, supports 5 different sizes"""
