@@ -1,6 +1,34 @@
 import tkinter as tk
 from tkinter.filedialog import askopenfilename, asksaveasfilename
 
+class CustomText(tk.Text):
+    def init(self, *args, **kwargs):
+        """Creates a proxy for the underlying widget"""
+        tk.Text.init(self, *args, **kwargs)
+        
+        self._orig = self._w + "_orig"
+        self.tk.call("rename", self._w, self._orig)
+        self.tk.createcommand(self._w, self._proxy)
+
+    def _proxy(self, *args):
+        """Lets the actual widget perform the requested action;
+        Generates an event if something was added or deleted or the cursor position changed
+        Returns what the actual widget returned
+        """
+        cmd = (self._orig,) + args
+        result = self.tk.call(cmd)
+
+        if (args[0] in ("insert", "replace", "delete") or 
+            args[0:3] == ("mark", "set", "insert") or
+            args[0:2] == ("xview", "moveto") or
+            args[0:2] == ("xview", "scroll") or
+            args[0:2] == ("yview", "moveto") or
+            args[0:2] == ("yview", "scroll")
+        ):
+            self.event_generate("<<Change>>", when="tail")
+
+        return result
+
 class Application(tk.Frame):
     def __init__(self, master=None, title="<application>", **kwargs):
         super().__init__(master, **kwargs)
@@ -11,7 +39,7 @@ class Application(tk.Frame):
         self.createWidgets()
     
     def createWidgets(self):
-        self.txt_edit = tk.Text(self, undo=True, width=40, height=15, font='fixed', borderwidth=2, relief='groove')
+        self.txt_edit = CustomText(self, width=40, height=15, font='fixed')
         self.fr_buttons = tk.Frame(self)
 
         self.is_on = True
@@ -40,6 +68,7 @@ class Application(tk.Frame):
         self.txt_edit.grid(row=0, column=1, sticky="nsew")
 
     def change_scale(self, *args):
+        """Changes the font size of the whole document, supports 5 different sizes"""
         if self.scale_option.get() == self.scale_option_list[0]:
             self.txt_edit.config(font=('Helvetica', 4))
         elif self.scale_option.get() == self.scale_option_list[1]:
@@ -89,6 +118,7 @@ class Application(tk.Frame):
         self.master.title(f"Gavrix - {path_to_file}")
 
     def file_close(self):
+        """Closes the file that user has opened"""
         self.txt_edit.delete("1.0", tk.END)
         self.master.title(f"Gavrix - NewFile.txt")
 
