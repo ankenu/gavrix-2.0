@@ -102,7 +102,8 @@ class Application(tk.Frame):
         
     def linenumbers_change(self, event):
         """Redraws the line numbering"""
-        self.linenumbers.redraw(self.scale_font_size[self.scale_option.get()])
+        if self.is_linenumbers_on:
+            self.linenumbers.redraw(self.scale_font_size[self.scale_option.get()])
 
     def change_scale(self, *args):
         """Changes the font size of the whole document, supports 5 different sizes"""
@@ -114,9 +115,11 @@ class Application(tk.Frame):
         if self.is_linenumbers_on:
             self.line_num.config(text="Line numbers: Off")
             self.is_linenumbers_on = False
+            self.linenumbers.grid_remove()
         else:
             self.line_num.config(text="Line numbers: On")
             self.is_linenumbers_on = True
+            self.linenumbers.grid()
 
     def save_as(self):
         """Saves the current file as new"""
