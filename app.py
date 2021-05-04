@@ -37,7 +37,7 @@ class TextLineNumbers(tk.Canvas):
         self.textwidget = text_widget
         
     def redraw(self, *args):
-        '''redraw line numbers'''
+        """Redraw line numbers"""
         self.delete("all")
 
         i = self.textwidget.index("@0,0")
