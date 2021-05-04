@@ -36,7 +36,7 @@ class TextLineNumbers(tk.Canvas):
     def attach(self, text_widget):
         self.textwidget = text_widget
         
-    def redraw(self, *args):
+    def redraw(self, font_size, *args):
         """Redraw line numbers"""
         self.delete("all")
 
@@ -46,7 +46,7 @@ class TextLineNumbers(tk.Canvas):
             if dline is None: break
             y = dline[1]
             linenum = str(i).split(".")[0]
-            self.create_text(2,y,anchor="nw", text=linenum)
+            self.create_text(2, y, anchor="nw", text=linenum, font=("TkDefaultFont", font_size-2))
             i = self.textwidget.index("%s+1line" % i)
 
 class Application(tk.Frame):
@@ -62,13 +62,15 @@ class Application(tk.Frame):
         self.scrollbar = tk.Scrollbar(self, orient="vertical", command=self.txt_edit.yview)
         self.txt_edit.configure(yscrollcommand=self.scrollbar.set)
         
+        self.is_linenumbers_on = True
+        
         self.linenumbers = TextLineNumbers(self, width=30)
         self.linenumbers.attach(self.txt_edit)
         
         self.fr_buttons = tk.Frame(self)
 
-        self.is_on = True
-        self.scale_option_list = ["25%", "50%", "75%", "100%", "125%"]
+        self.scale_font_size = dict([("25%", 4), ("50%", 8), ("75%", 12), ("100%", 16), ("125%", 20)])
+        self.scale_option_list = list(self.scale_font_size.keys())
 
         self.scale_option = tk.StringVar(self)
         self.scale_option.set(self.scale_option_list[2])
@@ -82,6 +84,7 @@ class Application(tk.Frame):
         self.close = tk.Button(self.fr_buttons, text="Close", command=self.file_close)
         self.line_num = tk.Button(self.fr_buttons, text="Line numbers: On", command=self.switch)
         self.line_num.config(width=14)
+        
 
         self.btn_open.grid(row=0, column=0, sticky="ew", padx=5, pady=5)
         self.btn_save.grid(row=1, column=0, sticky="ew", padx=5)
@@ -99,31 +102,21 @@ class Application(tk.Frame):
         
     def linenumbers_change(self, event):
         """Redraws the line numbering"""
-        self.linenumbers.redraw()
+        self.linenumbers.redraw(self.scale_font_size[self.scale_option.get()])
 
     def change_scale(self, *args):
         """Changes the font size of the whole document, supports 5 different sizes"""
-        if self.scale_option.get() == self.scale_option_list[0]:
-            self.txt_edit.config(font=('Helvetica', 4))
-        elif self.scale_option.get() == self.scale_option_list[1]:
-            self.txt_edit.config(font=('Helvetica', 8))
-        elif self.scale_option.get() == self.scale_option_list[2]:
-            self.txt_edit.config(font=('Helvetica', 12))
-        elif self.scale_option.get() == self.scale_option_list[3]:
-            self.txt_edit.config(font=('Helvetica', 16))
-        elif self.scale_option.get() == self.scale_option_list[4]:
-            self.txt_edit.config(font=('Helvetica', 20))
-
+        self.txt_edit.config(font=('Helvetica', self.scale_font_size[self.scale_option.get()]))
         self.txt_edit.insert(tk.END, "")
 
     def switch(self):
         """Toggles the button state"""
-        if self.is_on:
+        if self.is_linenumbers_on:
             self.line_num.config(text="Line numbers: Off")
-            self.is_on = False
+            self.is_linenumbers_on = False
         else:
             self.line_num.config(text="Line numbers: On")
-            self.is_on = True
+            self.is_linenumbers_on = True
 
     def save_as(self):
         """Saves the current file as new"""
