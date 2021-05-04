@@ -53,6 +53,8 @@ class Application(tk.Frame):
     def __init__(self, master=None, title="<application>", **kwargs):
         super().__init__(master, **kwargs)
         self.master.title(title)
+        self.mainmenu = tk.Menu(self.master)
+        self.master.config(menu=self.mainmenu)
 
         self.grid(sticky = "news")
         self.createWidgets()
@@ -66,44 +68,56 @@ class Application(tk.Frame):
         
         self.linenumbers = TextLineNumbers(self, width=30)
         self.linenumbers.attach(self.txt_edit)
+
+        self.gavrix = tk.Menu(self.mainmenu, tearoff=0)
+        self.gavrix.add_command(label='Open')
+        self.gavrix.add_command(label='Save')
+        self.gavrix.add_command(label='Save as')
+        self.gavrix.add_command(label='Close')
         
-        self.fr_buttons = tk.Frame(self)
+        self.view = tk.Menu(self.mainmenu, tearoff=0)
+        self.view.add_command(label='Line numbers: On')
 
-        self.scale_font_size = dict([("25%", 4), ("50%", 8), ("75%", 12), ("100%", 16), ("125%", 20)])
-        self.scale_option_list = list(self.scale_font_size.keys())
+        self.mainmenu.add_cascade(label='Gavrix', menu=self.gavrix)
+        self.mainmenu.add_cascade(label='View', menu=self.view)
+        
+        #self.fr_buttons = tk.Frame(self)
 
-        self.scale_option = tk.StringVar(self)
-        self.scale_option.set(self.scale_option_list[2])
-        self.scale = tk.OptionMenu(self.fr_buttons, self.scale_option, *self.scale_option_list)
-        self.scale.config(width=1)
-        self.scale_option.trace("w", self.change_scale)
+        #self.scale_font_size = dict([("25%", 4), ("50%", 8), ("75%", 12), ("100%", 16), ("125%", 20)])
+        #self.scale_option_list = list(self.scale_font_size.keys())
 
-        self.btn_open = tk.Button(self.fr_buttons, text="Open", command=self.file_open)
-        self.btn_save = tk.Button(self.fr_buttons, text="Save")
-        self.btn_save_as = tk.Button(self.fr_buttons, text="Save As", command=self.save_as)
-        self.close = tk.Button(self.fr_buttons, text="Close", command=self.file_close)
-        self.line_num = tk.Button(self.fr_buttons, text="Line numbers: On", command=self.switch)
-        self.line_num.config(width=14)
+        #self.scale_option = tk.StringVar(self)
+        #self.scale_option.set(self.scale_option_list[2])
+        #self.scale = tk.OptionMenu(self.fr_buttons, self.scale_option, *self.scale_option_list)
+        #self.scale.config(width=1)
+        #self.scale_option.trace("w", self.change_scale)
+
+        #self.btn_open = tk.Button(self.fr_buttons, text="Open", command=self.file_open)
+        #self.btn_save = tk.Button(self.fr_buttons, text="Save")
+        #self.btn_save_as = tk.Button(self.fr_buttons, text="Save As", command=self.save_as)
+        #self.close = tk.Button(self.fr_buttons, text="Close", command=self.file_close)
+        #self.line_num = tk.Button(self.fr_buttons, text="Line numbers: On", command=self.switch)
+        #self.line_num.config(width=14)
         
 
-        self.btn_open.grid(row=0, column=0, sticky="ew", padx=5, pady=5)
-        self.btn_save.grid(row=1, column=0, sticky="ew", padx=5)
-        self.btn_save_as.grid(row=1, column=1, sticky="ew", padx=5)
-        self.close.grid(row=2, column=0, sticky="ew", padx=5, pady=5)
-        self.scale.grid(row=2, column=1, sticky="ew", padx=5, pady=5)
-        self.line_num.grid(row=3, column=0, sticky="ew", padx=5)
-        self.fr_buttons.grid(row=0, column=0, sticky="ns")
+        #self.btn_open.grid(row=0, column=0, sticky="ew", padx=5, pady=5)
+        #self.btn_save.grid(row=1, column=0, sticky="ew", padx=5)
+        #self.btn_save_as.grid(row=1, column=1, sticky="ew", padx=5)
+        #self.close.grid(row=2, column=0, sticky="ew", padx=5, pady=5)
+        #self.scale.grid(row=2, column=1, sticky="ew", padx=5, pady=5)
+        #self.line_num.grid(row=3, column=0, sticky="ew", padx=5)
+        #self.fr_buttons.grid(row=0, column=0, sticky="ns")
         self.txt_edit.grid(row=0, column=2, sticky="nsew")
         self.scrollbar.grid(row=0, column=3, sticky='ns')
         self.linenumbers.grid(row=0, column=1, sticky="nsew")
 
-        self.txt_edit.bind("<<Change>>", self.linenumbers_change)
-        self.txt_edit.bind("<Configure>", self.linenumbers_change)
+        #self.txt_edit.bind("<<Change>>", self.linenumbers_change)
+        #self.txt_edit.bind("<Configure>", self.linenumbers_change)
         
-    def linenumbers_change(self, event):
-        """Redraws the line numbering"""
-        if self.is_linenumbers_on:
-            self.linenumbers.redraw(self.scale_font_size[self.scale_option.get()])
+    #def linenumbers_change(self, event):
+        #"""Redraws the line numbering"""
+        #if self.is_linenumbers_on:
+        #    self.linenumbers.redraw(self.scale_font_size[self.scale_option.get()])
 
     def change_scale(self, *args):
         """Changes the font size of the whole document, supports 5 different sizes"""
