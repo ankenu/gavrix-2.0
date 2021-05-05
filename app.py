@@ -61,6 +61,8 @@ class Application(tk.Frame):
         self.createWidgets()
     
     def createWidgets(self):
+        self.path_to_file = 0
+        
         self.txt_edit = CustomText(self, font=('Helvetica', self.fsize))
         self.scrollbar = tk.Scrollbar(self, orient="vertical", command=self.txt_edit.yview)
         self.txt_edit.configure(yscrollcommand=self.scrollbar.set)
@@ -130,16 +132,13 @@ class Application(tk.Frame):
 
     def save(self):
         """Saves the opened file, if no file is opened - acts like save_as()"""
-        try:
-            if not path_to_file:
-                return
-        except NameError:
+        if not self.path_to_file:
             self.save_as()
             return
-        with open(path_to_file, "w") as output_file:
+        with open(self.path_to_file, "w") as output_file:
             text = self.txt_edit.get("1.0", tk.END)
             output_file.write(text)
-        self.master.title(f"Gavrix - {path_to_file}")
+        self.master.title(f"Gavrix - {self.path_to_file}")
 
     def save_as(self):
         """Saves the current file as new"""
@@ -156,22 +155,22 @@ class Application(tk.Frame):
 
     def file_open(self):
         """Opens the file that user wants to edit"""
-        global path_to_file
-        path_to_file = askopenfilename(
-                filetypes=[("Text files", "*.txt"), ("All files", "*.*")]
+        self.path_to_file = askopenfilename(
+                filetypes=[("All files", "*.*"), ("Text files", "*.txt")]
         )
-        if not path_to_file:
+        if not self.path_to_file:
             return
         self.txt_edit.delete("1.0", tk.END)
-        with open(path_to_file, "r") as input_file:
+        with open(self.path_to_file, "r") as input_file:
             text = input_file.read()
             self.txt_edit.insert(tk.END, text)
-        self.master.title(f"Gavrix - {path_to_file}")
+        self.master.title(f"Gavrix - {self.path_to_file}")
 
     def file_close(self):
         """Closes the file that user has opened"""
         self.txt_edit.delete("1.0", tk.END)
         self.master.title(f"Gavrix - NewFile.txt")
+        self.path_to_file = 0
 
 app = Application(title="Gavrix - NewFile.txt")
 app.mainloop()
