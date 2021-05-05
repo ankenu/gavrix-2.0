@@ -57,7 +57,7 @@ class Application(tk.Frame):
         self.mainmenu = tk.Menu(self.master)
         self.master.config(menu=self.mainmenu)
 
-        self.grid(sticky = "news")
+        self.pack(fill="both", expand=True)
         self.createWidgets()
     
     def createWidgets(self):
@@ -89,12 +89,15 @@ class Application(tk.Frame):
         self.mainmenu.add_cascade(label='Gavrix', menu=self.gavrix)
         self.mainmenu.add_cascade(label='View', menu=self.view)
         
-        self.txt_edit.grid(row=0, column=2, sticky="nsew")
-        self.scrollbar.grid(row=0, column=3, sticky='ns')
-        self.linenumbers.grid(row=0, column=1, sticky="nsew")
+        self.positionWidgets()
 
         self.txt_edit.bind("<<Change>>", self.linenumbers_change)
         self.txt_edit.bind("<Configure>", self.linenumbers_change)
+
+    def positionWidgets(self):
+        self.linenumbers.pack(fill="y", side="left")
+        self.txt_edit.pack(fill="both", expand=True, side="left")
+        self.scrollbar.pack(fill="y", side="left")
         
     def linenumbers_change(self, event):
         """Redraws the line numbering"""
@@ -113,11 +116,15 @@ class Application(tk.Frame):
         if self.is_linenumbers_on:
             self.view.entryconfigure(0, label ="Line numbers: Off")
             self.is_linenumbers_on = False
-            self.linenumbers.grid_remove()
+            self.linenumbers.pack_forget()
         else:
             self.view.entryconfigure(0, label ="Line numbers: On")
             self.is_linenumbers_on = True
-            self.linenumbers.grid()
+            
+            self.txt_edit.pack_forget()
+            self.scrollbar.pack_forget()
+
+            self.positionWidgets()
 
     def save(self):
         """Saves the opened file, if no file is opened - acts like save_as()"""
