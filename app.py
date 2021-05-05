@@ -52,7 +52,7 @@ class TextLineNumbers(tk.Canvas):
 class Application(tk.Frame):
     def __init__(self, master=None, title="<application>", **kwargs):
         super().__init__(master, **kwargs)
-        self.fsize = 16
+        self.fsize = 12
         self.master.title(title)
         self.mainmenu = tk.Menu(self.master)
         self.master.config(menu=self.mainmenu)
@@ -72,23 +72,21 @@ class Application(tk.Frame):
 
         self.gavrix = tk.Menu(self.mainmenu, tearoff=0)
         self.gavrix.add_command(label='Open', command=self.file_open)
-        self.gavrix.add_command(label='Save', command=self.save_as)
+        self.gavrix.add_command(label='Save', command=self.save)
         self.gavrix.add_command(label='Save as', command=self.save_as)
+        self.gavrix.add_separator()
         self.gavrix.add_command(label='Close', command=self.file_close)
         
         self.view = tk.Menu(self.mainmenu, tearoff=0)
         self.view.add_command(label='Line numbers: On', command=self.switch)
         
         self.scale = tk.Menu(self.mainmenu, tearoff=0)
-        self.scale.add_command(label="25%", command=lambda n=4: self.change_scale(n))
-        self.scale.add_command(label="50%", command=lambda n=8: self.change_scale(n))
-        self.scale.add_command(label="75%", command=lambda n=12: self.change_scale(n))
-        self.scale.add_command(label="100%", command=lambda n=16: self.change_scale(n))
-        self.scale.add_command(label="125%", command=lambda n=20: self.change_scale(n))
+        for num in range(4, 21, 4):
+            self.scale.add_command(label=str(int(6.25*num))+"%", command=lambda n=num: self.change_scale(n))
 
         self.mainmenu.add_cascade(label='Gavrix', menu=self.gavrix)
         self.mainmenu.add_cascade(label='View', menu=self.view)
-        self.mainmenu.add_cascade(label='Scale: 100%', menu=self.scale)
+        self.view.add_cascade(label='Scale: 75%', menu=self.scale)
         
         self.txt_edit.grid(row=0, column=2, sticky="nsew")
         self.scrollbar.grid(row=0, column=3, sticky='ns')
@@ -120,21 +118,35 @@ class Application(tk.Frame):
             self.is_linenumbers_on = True
             self.linenumbers.grid()
 
-    def save_as(self):
-        """Saves the current file as new"""
-        path_to_file = asksaveasfilename(
-                defaultextension=".txt",
-                filetypes=[("Text files","*.txt"),("All files", "*.*")]
-        )
-        if not path_to_file:
+    def save(self):
+        """Saves the opened file, if no file is opened - acts like save_as()"""
+        try:
+            if not path_to_file:
+                return
+        except NameError:
+            self.save_as()
             return
         with open(path_to_file, "w") as output_file:
             text = self.txt_edit.get("1.0", tk.END)
             output_file.write(text)
         self.master.title(f"Gavrix - {path_to_file}")
 
+    def save_as(self):
+        """Saves the current file as new"""
+        path_to_an_file = asksaveasfilename(
+                defaultextension=".txt",
+                filetypes=[("Text files","*.txt"),("All files", "*.*")]
+        )
+        if not path_to_an_file:
+            return
+        with open(path_to_an_file, "w") as output_an_file:
+            text = self.txt_edit.get("1.0", tk.END)
+            output_file.write(text)
+        self.master.title(f"Gavrix - {path_to_an_file}")
+
     def file_open(self):
         """Opens the file that user wants to edit"""
+        global path_to_file
         path_to_file = askopenfilename(
                 filetypes=[("Text files", "*.txt"), ("All files", "*.*")]
         )
