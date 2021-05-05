@@ -80,8 +80,10 @@ class Application(tk.Frame):
         self.view = tk.Menu(self.mainmenu, tearoff=0)
         
         self.scale = tk.Menu(self.mainmenu, tearoff=0)
-        for num in range(4, 21, 4):
-            self.scale.add_command(label=str(int(6.25*num))+"%", command=lambda n=num: self.change_scale(n))
+        self.scale_sizes = dict([("25%", 4), ("50%", 8), ("75%", 12), ("100%", 16), ("125%", 20)])
+        self.scale_sizes_percent = list(self.scale_sizes.keys())
+        for percent in self.scale_sizes_percent:
+            self.scale.add_command(label=percent, command=lambda n=self.scale_sizes[percent]: self.change_scale(n))
         
         self.view.add_command(label='Line numbers: On', command=self.switch)
         self.view.add_cascade(label='Scale: 75%', menu=self.scale)
