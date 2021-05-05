@@ -78,15 +78,16 @@ class Application(tk.Frame):
         self.gavrix.add_command(label='Close', command=self.file_close)
         
         self.view = tk.Menu(self.mainmenu, tearoff=0)
-        self.view.add_command(label='Line numbers: On', command=self.switch)
         
         self.scale = tk.Menu(self.mainmenu, tearoff=0)
         for num in range(4, 21, 4):
             self.scale.add_command(label=str(int(6.25*num))+"%", command=lambda n=num: self.change_scale(n))
+        
+        self.view.add_command(label='Line numbers: On', command=self.switch)
+        self.view.add_cascade(label='Scale: 75%', menu=self.scale)
 
         self.mainmenu.add_cascade(label='Gavrix', menu=self.gavrix)
         self.mainmenu.add_cascade(label='View', menu=self.view)
-        self.view.add_cascade(label='Scale: 75%', menu=self.scale)
         
         self.txt_edit.grid(row=0, column=2, sticky="nsew")
         self.scrollbar.grid(row=0, column=3, sticky='ns')
@@ -105,16 +106,16 @@ class Application(tk.Frame):
         self.fsize = s
         self.txt_edit.config(font=('Helvetica', s))
         self.txt_edit.insert(tk.END, "")
-        self.mainmenu.entryconfigure(3, label = "Scale: "+str(int(6.25*s))+"%")
+        self.view.entryconfigure(1, label = "Scale: "+str(int(6.25*s))+"%")
 
     def switch(self):
         """Toggles the button state"""
         if self.is_linenumbers_on:
-            self.view.entryconfigure(1, label ="Line numbers: Off")
+            self.view.entryconfigure(0, label ="Line numbers: Off")
             self.is_linenumbers_on = False
             self.linenumbers.grid_remove()
         else:
-            self.view.entryconfigure(1, label ="Line numbers: On")
+            self.view.entryconfigure(0, label ="Line numbers: On")
             self.is_linenumbers_on = True
             self.linenumbers.grid()
 
