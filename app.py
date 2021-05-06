@@ -73,7 +73,10 @@ class Application(tk.Frame):
         self.linenumbers.attach(self.txt_edit)
 
         self.gavrix = tk.Menu(self.mainmenu, tearoff=0)
-        self.gavrix.add_command(label='Open', command=self.file_open)
+        self.gavrix.add_command(label='Open File', command=self.file_open)
+        self.gavrix.add_command(label='Open Folder')
+        # self.gavrix.add_command(label='Open Folder', command=self.file_folder)
+        self.gavrix.add_separator()
         self.gavrix.add_command(label='Save', command=self.save)
         self.gavrix.add_command(label='Save as', command=self.save_as)
         self.gavrix.add_separator()
