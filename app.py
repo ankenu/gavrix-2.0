@@ -1,5 +1,7 @@
 import tkinter as tk
+from tkinter import ttk
 from tkinter.filedialog import askopenfilename, asksaveasfilename
+import os
 
 class CustomText(tk.Text):
     def __init__(self, *args, **kwargs):
@@ -66,6 +68,16 @@ class Application(tk.Frame):
         self.txt_edit = CustomText(self, font=('Helvetica', self.fsize))
         self.scrollbar = tk.Scrollbar(self, orient="vertical", command=self.txt_edit.yview)
         self.txt_edit.configure(yscrollcommand=self.scrollbar.set)
+
+        self.folder_explorer = ttk.Treeview(self, show="tree")
+        self.scrollbar_folder_explorer = tk.Scrollbar(self, orient="vertical", command=self.folder_explorer.yview)
+        self.folder_explorer.configure(yscrollcommand=self.scrollbar_folder_explorer.set)
+
+        self.path_to_folder="/home"
+        self.folder_explorer.heading("#0", text="Dir："+self.path_to_folder, anchor="w")
+        self.path = os.path.abspath(self.path_to_folder)
+        self.node = self.folder_explorer.insert("", "end", text=self.path_to_folder, open=True)
+        self.folder_explorer_runner(self.node, self.path)
         
         self.is_linenumbers_on = True
         
@@ -102,10 +114,25 @@ class Application(tk.Frame):
         self.txt_edit.bind("<Configure>", self.linenumbers_change)
 
     def positionWidgets(self):
+        self.folder_explorer.pack(fill="y", side="left")
+        self.scrollbar_folder_explorer.pack(fill="y", side="left")
         self.linenumbers.pack(fill="y", side="left")
         self.txt_edit.pack(fill="both", expand=True, side="left")
         self.scrollbar.pack(fill="y", side="left")
-        
+    
+    def folder_explorer_runner(self, parent, path):
+        tag = "file"
+        for d in os.listdir(path):
+            full_path=os.path.join(path,d)
+            isdir = os.path.isdir(full_path)
+            if isdir:
+                tag = "folder"
+            id = self.folder_explorer.insert(parent, 'end', text=d, open=False, tags=tag)
+            # self.path_to_file = full_path
+            if isdir:
+                tag = "file"
+                self.folder_explorer_runner(id, full_path)
+
     def linenumbers_change(self, event):
         """Redraws the line numbering"""
         if self.is_linenumbers_on:
