@@ -64,7 +64,7 @@ class Application(tk.Frame):
     
     def createWidgets(self):
         self.path_to_file = 0
-        self.path_to_folder="/home/fickmann/Документы/CG"
+        self.path_to_folder="/home"
         
         self.first_screen = ttk.PanedWindow(self, orient="horizontal")
         self.second_screen = ttk.PanedWindow(self.first_screen, orient="horizontal")
@@ -117,6 +117,7 @@ class Application(tk.Frame):
 
         self.txt_edit.bind("<<Change>>", self.linenumbers_change)
         self.txt_edit.bind("<Configure>", self.linenumbers_change)
+        self.folder_explorer.bind("<Double-1>", self.explorer_file_open)
 
     def positionWidgets(self):
         self.first_screen.pack(fill="both", expand=True, side="left")
@@ -144,6 +145,28 @@ class Application(tk.Frame):
             if isdir:
                 tag = "file"
                 self.folder_explorer_runner(id, full_path)
+
+    def explorer_file_open(self, event):
+        item_id = self.folder_explorer.selection()[0]
+        file_tag = self.folder_explorer.item(item_id, "tags")[0]
+        if file_tag == "file":
+            item_name = self.folder_explorer.item(item_id,"text")
+            path = ""
+            while True:
+                parent_id = self.folder_explorer.parent(item_id)
+                node = self.folder_explorer.item(parent_id)['text']
+                if node == self.path_to_folder:
+                    path = node + path + "/" + item_name
+                    self.path_to_file = path
+                    break
+                path = "/" + node + path
+                item_id = parent_id
+            # Open file
+            self.txt_edit.delete("1.0", tk.END)
+            with open(self.path_to_file, "r") as input_file:
+                text = input_file.read()
+                self.txt_edit.insert(tk.END, text)
+            self.master.title(f"Gavrix - {self.path_to_file}")
 
     def linenumbers_change(self, event):
         """Redraws the line numbering"""
