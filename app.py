@@ -64,24 +64,29 @@ class Application(tk.Frame):
     
     def createWidgets(self):
         self.path_to_file = 0
+        self.path_to_folder="/home/fickmann/Документы/CG"
         
-        self.txt_edit = CustomText(self, font=('Helvetica', self.fsize))
-        self.scrollbar = tk.Scrollbar(self, orient="vertical", command=self.txt_edit.yview)
+        self.first_screen = ttk.PanedWindow(self, orient="horizontal")
+        self.second_screen = ttk.PanedWindow(self.first_screen, orient="horizontal")
+        self.first_place = tk.Frame(self.first_screen)
+        self.second_place = tk.Frame(self.second_screen)
+
+        self.txt_edit = CustomText(self.second_place, font=("Helvetica", self.fsize))
+        self.scrollbar = tk.Scrollbar(self.second_place, orient="vertical", command=self.txt_edit.yview)
         self.txt_edit.configure(yscrollcommand=self.scrollbar.set)
 
-        self.folder_explorer = ttk.Treeview(self, show="tree")
-        self.scrollbar_folder_explorer = tk.Scrollbar(self, orient="vertical", command=self.folder_explorer.yview)
+        self.folder_explorer = ttk.Treeview(self.first_place, show="tree")
+        self.scrollbar_folder_explorer = tk.Scrollbar(self.first_place, orient="vertical", command=self.folder_explorer.yview)
         self.folder_explorer.configure(yscrollcommand=self.scrollbar_folder_explorer.set)
 
-        self.path_to_folder="/home"
-        self.folder_explorer.heading("#0", text="Dir："+self.path_to_folder, anchor="w")
+        self.folder_explorer.heading("#0", text="Dir：" + self.path_to_folder, anchor='w')
         self.path = os.path.abspath(self.path_to_folder)
         self.node = self.folder_explorer.insert("", "end", text=self.path_to_folder, open=True)
         self.folder_explorer_runner(self.node, self.path)
         
         self.is_linenumbers_on = True
         
-        self.linenumbers = TextLineNumbers(self, width=30)
+        self.linenumbers = TextLineNumbers(self.second_place, width=30)
         self.linenumbers.attach(self.txt_edit)
 
         self.gavrix = tk.Menu(self.mainmenu, tearoff=0)
@@ -114,7 +119,14 @@ class Application(tk.Frame):
         self.txt_edit.bind("<Configure>", self.linenumbers_change)
 
     def positionWidgets(self):
-        self.folder_explorer.pack(fill="y", side="left")
+        self.first_screen.pack(fill="both", expand=True, side="left")
+        
+        self.first_screen.add(self.first_place)
+        self.first_screen.add(self.second_screen)
+
+        self.second_screen.add(self.second_place)
+
+        self.folder_explorer.pack(fill="both", expand=True, side="left")
         self.scrollbar_folder_explorer.pack(fill="y", side="left")
         self.linenumbers.pack(fill="y", side="left")
         self.txt_edit.pack(fill="both", expand=True, side="left")
@@ -127,7 +139,7 @@ class Application(tk.Frame):
             isdir = os.path.isdir(full_path)
             if isdir:
                 tag = "folder"
-            id = self.folder_explorer.insert(parent, 'end', text=d, open=False, tags=tag)
+            id = self.folder_explorer.insert(parent, "end", text=d, open=False, tags=tag)
             # self.path_to_file = full_path
             if isdir:
                 tag = "file"
