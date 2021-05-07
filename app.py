@@ -1,7 +1,21 @@
 import tkinter as tk
 from tkinter import ttk
 from tkinter.filedialog import askopenfilename, asksaveasfilename, askdirectory
+#sudo apt install python3-pil.imagetk
+from PIL import Image, ImageTk
 import os
+
+class File:
+    def __init__(self, Widget, TypeTag, FilePath=""):
+        self.file_widget = Widget
+        self.tag = TypeTag
+        self.file_path = FilePath
+        self.file_name = 'NewFile.txt' if not FilePath else os.path.basename(FilePath)
+
+class Tabs(ttk.Notebook):
+    def __init__(self, *args, **kwargs):
+        ttk.Notebook.__init__(self, *args, **kwargs)
+        self.tabs_collection = {} # { index, text widget }
 
 class CustomText(tk.Text):
     def __init__(self, *args, **kwargs):
@@ -70,6 +84,9 @@ class Explorer(ttk.Treeview):
 
     def start(self, new_folder_path):
         if new_folder_path != "":
+            main_folder_id = self.get_children()
+            if main_folder_id:
+                self.delete(*main_folder_id)
             self.folder_path = new_folder_path
 
             self.heading("#0", text="Dir：" + self.folder_path, anchor='w')
@@ -99,7 +116,6 @@ class Explorer(ttk.Treeview):
             # self.master.title(f"Gavrix - {self.path_to_file}")
             return path
 
-
 class Application(tk.Frame):
     def __init__(self, master=None, title="<application>", **kwargs):
         super().__init__(master, **kwargs)
@@ -121,8 +137,11 @@ class Application(tk.Frame):
         self.first_place = tk.Frame(self.first_screen)
         self.second_place = tk.Frame(self.second_screen)
 
-        self.txt_edit = CustomText(self.second_place, font=("Helvetica", self.fsize))
-        self.scrollbar = tk.Scrollbar(self.second_place, orient="vertical", command=self.txt_edit.yview)
+        self.tabpad = Tabs(self.second_place)
+        self.tab_place = tk.Frame(self.tabpad)
+
+        self.txt_edit = CustomText(self.tab_place, font=("Helvetica", self.fsize))
+        self.scrollbar = tk.Scrollbar(self.tab_place, orient="vertical", command=self.txt_edit.yview)
         self.txt_edit.configure(yscrollcommand=self.scrollbar.set)
 
         self.explorer = Explorer(self.first_place, show="tree")
@@ -133,7 +152,7 @@ class Application(tk.Frame):
         
         self.is_linenumbers_on = True
         
-        self.linenumbers = TextLineNumbers(self.second_place, width=30)
+        self.linenumbers = TextLineNumbers(self.tab_place, width=30)
         self.linenumbers.attach(self.txt_edit)
 
         self.gavrix = tk.Menu(self.mainmenu, tearoff=0)
@@ -168,16 +187,20 @@ class Application(tk.Frame):
 
     def positionWidgets(self):
         self.first_screen.pack(fill="both", expand=True, side="left")
+        self.second_screen.pack(fill="both", expand=True, side="left")
+        self.tab_place.pack(fill="both", expand=True, side="left")
         
-        self.first_screen.add(self.first_place)
-        self.first_screen.add(self.second_screen)
-
-        self.second_screen.add(self.second_place)
         self.explorer.pack(fill="both", expand=True, side="left")
         self.scrollbar_explorer.pack(fill="y", side="left")
         self.linenumbers.pack(fill="y", side="left")
+        self.tabpad.pack(fill="both", expand=True, side="left")
         self.txt_edit.pack(fill="both", expand=True, side="left")
         self.scrollbar.pack(fill="y", side="left")
+
+        self.first_screen.add(self.first_place)
+        self.first_screen.add(self.second_screen)
+        self.second_screen.add(self.second_place)
+        self.tabpad.add(self.tab_place, text="Cat")
     
     def folder_open(self):
         folder_path = askdirectory()
