@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
-from tkinter.filedialog import askopenfilename, asksaveasfilename
+from tkinter.filedialog import askopenfilename, asksaveasfilename, askdirectory
 import os
 
 class CustomText(tk.Text):
@@ -51,6 +51,55 @@ class TextLineNumbers(tk.Canvas):
             self.create_text(2, y, anchor="nw", text=linenum, font=("TkDefaultFont", font_size-2))
             i = self.textwidget.index("%s+1line" % i)
 
+class Explorer(ttk.Treeview):
+    def __init__(self, *args, **kwargs):
+        ttk.Treeview.__init__(self, *args, **kwargs)
+        self.folder_path = ""
+
+    def runner(self, parent, path):
+        tag = "file"
+        for d in os.listdir(path):
+            full_path=os.path.join(path,d)
+            isdir = os.path.isdir(full_path)
+            if isdir:
+                tag = "folder"
+            id = self.insert(parent, "end", text=d, open=False, tags=tag)
+            if isdir:
+                tag = "file"
+                self.runner(id, full_path)
+
+    def start(self, new_folder_path):
+        if new_folder_path != "":
+            self.folder_path = new_folder_path
+
+            self.heading("#0", text="Dir：" + self.folder_path, anchor='w')
+            path = os.path.abspath(self.folder_path)
+            node = self.insert("", "end", text=self.folder_path, open=True)
+            self.runner(node, path)
+    
+    def file_open(self, event):
+        item_id = self.selection()[0]
+        file_tag = self.item(item_id, "tags")[0]
+        if file_tag == "file":
+            item_name = self.item(item_id,"text")
+            path = ""
+            while True:
+                parent_id = self.parent(item_id)
+                node = self.item(parent_id)['text']
+                if node == self.folder_path:
+                    path = node + path + "/" + item_name
+                    break
+                path = "/" + node + path
+                item_id = parent_id
+            # # Open file
+            # self.txt_edit.delete("1.0", tk.END)
+            # with open(self.path_to_file, "r") as input_file:
+            #     text = input_file.read()
+            #     self.txt_edit.insert(tk.END, text)
+            # self.master.title(f"Gavrix - {self.path_to_file}")
+            return path
+
+
 class Application(tk.Frame):
     def __init__(self, master=None, title="<application>", **kwargs):
         super().__init__(master, **kwargs)
@@ -64,7 +113,8 @@ class Application(tk.Frame):
     
     def createWidgets(self):
         self.path_to_file = 0
-        self.path_to_folder="/home"
+        self.path_to_folder = ""
+        self.is_folder_explorer_on = False
         
         self.first_screen = ttk.PanedWindow(self, orient="horizontal")
         self.second_screen = ttk.PanedWindow(self.first_screen, orient="horizontal")
@@ -75,14 +125,11 @@ class Application(tk.Frame):
         self.scrollbar = tk.Scrollbar(self.second_place, orient="vertical", command=self.txt_edit.yview)
         self.txt_edit.configure(yscrollcommand=self.scrollbar.set)
 
-        self.folder_explorer = ttk.Treeview(self.first_place, show="tree")
-        self.scrollbar_folder_explorer = tk.Scrollbar(self.first_place, orient="vertical", command=self.folder_explorer.yview)
-        self.folder_explorer.configure(yscrollcommand=self.scrollbar_folder_explorer.set)
+        self.explorer = Explorer(self.first_place, show="tree")
+        self.scrollbar_explorer = tk.Scrollbar(self.first_place, orient="vertical", command=self.explorer.yview)
+        self.explorer.configure(yscrollcommand=self.scrollbar_explorer.set)
 
-        self.folder_explorer.heading("#0", text="Dir：" + self.path_to_folder, anchor='w')
-        self.path = os.path.abspath(self.path_to_folder)
-        self.node = self.folder_explorer.insert("", "end", text=self.path_to_folder, open=True)
-        self.folder_explorer_runner(self.node, self.path)
+        self.explorer.start("")
         
         self.is_linenumbers_on = True
         
@@ -91,8 +138,8 @@ class Application(tk.Frame):
 
         self.gavrix = tk.Menu(self.mainmenu, tearoff=0)
         self.gavrix.add_command(label='Open File', command=self.file_open)
-        self.gavrix.add_command(label='Open Folder')
-        # self.gavrix.add_command(label='Open Folder', command=self.file_folder)
+        self.gavrix.add_command(label='Open Folder', command=self.folder_open) 
+
         self.gavrix.add_separator()
         self.gavrix.add_command(label='Save', command=self.save)
         self.gavrix.add_command(label='Save as', command=self.save_as)
@@ -117,7 +164,7 @@ class Application(tk.Frame):
 
         self.txt_edit.bind("<<Change>>", self.linenumbers_change)
         self.txt_edit.bind("<Configure>", self.linenumbers_change)
-        self.folder_explorer.bind("<Double-1>", self.explorer_file_open)
+        # self.explorer.bind("<Double-1>", self.explorer.file_open(event))
 
     def positionWidgets(self):
         self.first_screen.pack(fill="both", expand=True, side="left")
@@ -126,47 +173,15 @@ class Application(tk.Frame):
         self.first_screen.add(self.second_screen)
 
         self.second_screen.add(self.second_place)
-
-        self.folder_explorer.pack(fill="both", expand=True, side="left")
-        self.scrollbar_folder_explorer.pack(fill="y", side="left")
+        self.explorer.pack(fill="both", expand=True, side="left")
+        self.scrollbar_explorer.pack(fill="y", side="left")
         self.linenumbers.pack(fill="y", side="left")
         self.txt_edit.pack(fill="both", expand=True, side="left")
         self.scrollbar.pack(fill="y", side="left")
     
-    def folder_explorer_runner(self, parent, path):
-        tag = "file"
-        for d in os.listdir(path):
-            full_path=os.path.join(path,d)
-            isdir = os.path.isdir(full_path)
-            if isdir:
-                tag = "folder"
-            id = self.folder_explorer.insert(parent, "end", text=d, open=False, tags=tag)
-            # self.path_to_file = full_path
-            if isdir:
-                tag = "file"
-                self.folder_explorer_runner(id, full_path)
-
-    def explorer_file_open(self, event):
-        item_id = self.folder_explorer.selection()[0]
-        file_tag = self.folder_explorer.item(item_id, "tags")[0]
-        if file_tag == "file":
-            item_name = self.folder_explorer.item(item_id,"text")
-            path = ""
-            while True:
-                parent_id = self.folder_explorer.parent(item_id)
-                node = self.folder_explorer.item(parent_id)['text']
-                if node == self.path_to_folder:
-                    path = node + path + "/" + item_name
-                    self.path_to_file = path
-                    break
-                path = "/" + node + path
-                item_id = parent_id
-            # Open file
-            self.txt_edit.delete("1.0", tk.END)
-            with open(self.path_to_file, "r") as input_file:
-                text = input_file.read()
-                self.txt_edit.insert(tk.END, text)
-            self.master.title(f"Gavrix - {self.path_to_file}")
+    def folder_open(self):
+        folder_path = askdirectory()
+        self.explorer.start(folder_path)
 
     def linenumbers_change(self, event):
         """Redraws the line numbering"""
