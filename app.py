@@ -6,6 +6,7 @@ import json
 
 class JsonTheme():
     def __init__(self):
+        self.file_path = "themes/theme.json"
         self.data = {}
         self.data["themes"] = []
         self.data["themes"].append({
@@ -22,18 +23,28 @@ class JsonTheme():
                     "background_color": "Dark Grey"
                     }
             })
-        try:
-            open("theme.json", "r")
-        except IOError:
-            json.dump(self.data, open("theme.json", "w+"), indent=4)
+        #self.text_color = "Black"
+        #self.bg_color = "Light Grey"
+        #self.line_num_color = "Black"
         
-    file = open("theme.json", "r")
-    read = json.loads(file.read())
+    def check(self):    
+        try:
+            open(self.file_path, "r")
+        except IOError:
+            json.dump(self.data, open(self.file_path, "w+"), indent=4)
+
+    def read(self):   
+        self.file = open(self.file_path, "r")
+        self.file_data = json.loads(self.file.read())
     
-    theme_id = "Light"
-    text_color = read["themes"][theme_id]["text_color"]
-    bg_color = read["themes"][theme_id]["background_color"]
-    line_num_color = read["themes"][theme_id]["line_num_color"]
+        self.theme_id = "Light"
+        self.text_color = self.file_data["themes"][self.theme_id]["text_color"]
+        self.bg_color = self.file_data["themes"][self.theme_id]["background_color"]
+        self.line_num_color = self.file_data["themes"][self.theme_id]["line_num_color"]
+
+json_file = JsonTheme()
+json_file.check()
+json_file.read()
 
 class CustomText(tk.Text):
     def __init__(self, *args, **kwargs):
@@ -64,7 +75,7 @@ class CustomText(tk.Text):
 
 class TextLineNumbers(tk.Canvas):
     def __init__(self, *args, **kwargs):
-        tk.Canvas.__init__(self, *args, **kwargs, bg = JsonTheme.bg_color, highlightbackground = JsonTheme.bg_color)
+        tk.Canvas.__init__(self, *args, **kwargs, bg = json_file.bg_color, highlightbackground = json_file.bg_color)
         self.textwidget = None
 
     def attach(self, text_widget):
@@ -80,7 +91,7 @@ class TextLineNumbers(tk.Canvas):
             if dline is None: break
             y = dline[1]
             linenum = str(i).split(".")[0]
-            self.create_text(2, y, anchor="nw", text=linenum, font=("TkDefaultFont", font_size-2), fill = JsonTheme.text_color)
+            self.create_text(2, y, anchor="nw", text=linenum, font=("TkDefaultFont", font_size-2), fill = json_file.text_color)
             i = self.textwidget.index("%s+1line" % i)
 
 class Explorer(ttk.Treeview):
@@ -88,11 +99,11 @@ class Explorer(ttk.Treeview):
         ttk.Treeview.__init__(self, *args, **kwargs)
         ttk.Style().configure(
             "Treeview", 
-            background = JsonTheme.bg_color, 
-            foreground = JsonTheme.text_color, 
-            fieldbackground = JsonTheme.bg_color,
-            highlightbackground = JsonTheme.bg_color,
-            bordercolor = JsonTheme.bg_color)
+            background = json_file.bg_color, 
+            foreground = json_file.text_color, 
+            fieldbackground = json_file.bg_color,
+            highlightbackground = json_file.bg_color,
+            bordercolor = json_file.bg_color)
         self.folder_path = ""
 
     def runner(self, parent, path):
@@ -146,10 +157,10 @@ class Application(tk.Frame):
         self.master.title(title)
         self.mainmenu = tk.Menu(
             self.master, 
-            bg = JsonTheme.bg_color, 
-            fg = JsonTheme.text_color,
-            activebackground = JsonTheme.bg_color,
-            activeforeground = JsonTheme.text_color)
+            bg = json_file.bg_color, 
+            fg = json_file.text_color,
+            activebackground = json_file.bg_color,
+            activeforeground = json_file.text_color)
         self.master.config(menu=self.mainmenu)
 
         self.pack(fill="both", expand=True)
@@ -164,24 +175,24 @@ class Application(tk.Frame):
         self.second_screen = ttk.PanedWindow(self.first_screen, orient="horizontal")
         ttk.Style().configure(
             "TPanedwindow",
-            background = JsonTheme.bg_color,
-            bordercolor = JsonTheme.bg_color
+            background = json_file.bg_color,
+            bordercolor = json_file.bg_color
 
         )
-        self.first_place = tk.Frame(self.first_screen, bg = JsonTheme.bg_color, highlightbackground = JsonTheme.bg_color, highlightcolor = JsonTheme.bg_color)
-        self.second_place = tk.Frame(self.second_screen, bg = JsonTheme.bg_color, highlightbackground = JsonTheme.bg_color, highlightcolor = JsonTheme.bg_color)
+        self.first_place = tk.Frame(self.first_screen, bg = json_file.bg_color, highlightbackground = json_file.bg_color, highlightcolor = json_file.bg_color)
+        self.second_place = tk.Frame(self.second_screen, bg = json_file.bg_color, highlightbackground = json_file.bg_color, highlightcolor = json_file.bg_color)
 
         self.txt_edit = CustomText(
             self.second_place, 
             font=("Helvetica", self.fsize), 
-            bg = JsonTheme.bg_color, 
-            fg = JsonTheme.text_color,
-            highlightbackground = JsonTheme.bg_color)
+            bg = json_file.bg_color, 
+            fg = json_file.text_color,
+            highlightbackground = json_file.bg_color)
         self.scrollbar = tk.Scrollbar(
             self.second_place, 
             orient="vertical", 
             command=self.txt_edit.yview,
-            bg = JsonTheme.bg_color)
+            bg = json_file.bg_color)
         self.txt_edit.configure(yscrollcommand=self.scrollbar.set)
 
         self.explorer = Explorer(self.first_place, show="tree")
@@ -189,7 +200,7 @@ class Application(tk.Frame):
             self.first_place, 
             orient="vertical", 
             command=self.explorer.yview,
-            bg = JsonTheme.bg_color)
+            bg = json_file.bg_color)
         self.explorer.configure(yscrollcommand=self.scrollbar_explorer.set)
 
         self.explorer.start("")
@@ -202,10 +213,10 @@ class Application(tk.Frame):
         self.gavrix = tk.Menu(
             self.mainmenu, 
             tearoff=0,
-            bg = JsonTheme.bg_color, 
-            fg = JsonTheme.text_color,
-            activebackground = JsonTheme.bg_color,
-            activeforeground = JsonTheme.text_color)
+            bg = json_file.bg_color, 
+            fg = json_file.text_color,
+            activebackground = json_file.bg_color,
+            activeforeground = json_file.text_color)
         self.gavrix.add_command(label="Open File", command=self.file_open)
         self.gavrix.add_command(label="Open Folder", command=self.folder_open) 
 
@@ -218,18 +229,18 @@ class Application(tk.Frame):
         self.view = tk.Menu(
             self.mainmenu, 
             tearoff=0,
-            bg = JsonTheme.bg_color, 
-            fg = JsonTheme.text_color,
-            activebackground = JsonTheme.bg_color,
-            activeforeground = JsonTheme.text_color)
+            bg = json_file.bg_color, 
+            fg = json_file.text_color,
+            activebackground = json_file.bg_color,
+            activeforeground = json_file.text_color)
         
         self.scale = tk.Menu(
             self.mainmenu, 
             tearoff=0,
-            bg = JsonTheme.bg_color, 
-            fg = JsonTheme.text_color,
-            activebackground = JsonTheme.bg_color,
-            activeforeground = JsonTheme.text_color)
+            bg = json_file.bg_color, 
+            fg = json_file.text_color,
+            activebackground = json_file.bg_color,
+            activeforeground = json_file.text_color)
         self.scale_sizes = dict([("25%", 4), ("50%", 8), ("75%", 12), ("100%", 16), ("125%", 20)])
         self.scale_sizes_percent = list(self.scale_sizes.keys())
         for percent in self.scale_sizes_percent:
@@ -238,10 +249,10 @@ class Application(tk.Frame):
         self.themes = tk.Menu(
             self.mainmenu, 
             tearoff=0,
-            bg = JsonTheme.bg_color, 
-            fg = JsonTheme.text_color,
-            activebackground = JsonTheme.bg_color,
-            activeforeground = JsonTheme.text_color)
+            bg = json_file.bg_color, 
+            fg = json_file.text_color,
+            activebackground = json_file.bg_color,
+            activeforeground = json_file.text_color)
         self.themes.add_command(label="Light", command=self.light_theme)
         self.themes.add_command(label="Dark", command=self.dark_theme)
         
@@ -259,10 +270,10 @@ class Application(tk.Frame):
         # self.explorer.bind("<Double-1>", self.explorer.file_open(event))
 
     def light_theme(self):
-        JsonTheme.theme_id = "Light"
+        json_file.theme_id = "Light"
 
     def dark_theme(self):
-        JsonTheme.theme_id = "Dark"
+        json_file.theme_id = "Dark"
 
     def positionWidgets(self):
         self.first_screen.pack(fill="both", expand=True, side="left")
