@@ -6,16 +6,11 @@ from PIL import Image, ImageTk
 import os
 
 class File:
-    def __init__(self, Widget, TypeTag, FilePath=""):
-        self.file_widget = Widget
+    def __init__(self, TypeTag, FilePath=""):
+        self.widget = None
         self.tag = TypeTag
-        self.file_path = FilePath
-        self.file_name = 'NewFile.txt' if not FilePath else os.path.basename(FilePath)
-
-class Tabs(ttk.Notebook):
-    def __init__(self, *args, **kwargs):
-        ttk.Notebook.__init__(self, *args, **kwargs)
-        self.tabs_collection = {} # { index, text widget }
+        self.path = FilePath
+        self.name = 'NewFile.txt' if not FilePath else os.path.basename(FilePath)
 
 class CustomText(tk.Text):
     def __init__(self, *args, **kwargs):
@@ -51,6 +46,11 @@ class TextLineNumbers(tk.Canvas):
 
     def attach(self, text_widget):
         self.textwidget = text_widget
+    
+    def linenumbers_change(self, event):
+        """Redraws the line numbering"""
+        # if self.is_linenumbers_on:
+        self.redraw(14) #self.fsize
         
     def redraw(self, font_size, *args):
         """Redraw line numbers"""
@@ -64,6 +64,39 @@ class TextLineNumbers(tk.Canvas):
             linenum = str(i).split(".")[0]
             self.create_text(2, y, anchor="nw", text=linenum, font=("TkDefaultFont", font_size-2))
             i = self.textwidget.index("%s+1line" % i)
+
+class Tabs(ttk.Notebook):
+    def __init__(self, *args, **kwargs):
+        ttk.Notebook.__init__(self, *args, **kwargs)
+        self.tabs_collection = {} # { index, file }
+    
+    def add_new(self, file):
+        tab_place = tk.Frame(self)
+        if file.tag == "doc":
+            txt_edit = CustomText(tab_place, font=("Helvetica", 14))  #self.fsize 14
+            scrollbar = tk.Scrollbar(tab_place, orient="vertical", command=txt_edit.yview)
+            txt_edit.configure(yscrollcommand=scrollbar.set)
+            
+            linenumbers = TextLineNumbers(tab_place, width=30)
+            linenumbers.attach(txt_edit)
+
+            tab_place.pack(fill="both", expand=True, side="left")
+            linenumbers.pack(fill="y", side="left")
+            txt_edit.pack(fill="both", expand=True, side="left")
+            scrollbar.pack(fill="y", side="left")
+
+            txt_edit.bind("<<Change>>", linenumbers.linenumbers_change)
+            txt_edit.bind("<Configure>", linenumbers.linenumbers_change)
+
+            file.widget = tab_place
+
+        if file.path != "":
+            txt_edit.delete("1.0", tk.END)
+            with open(file.path, "r") as input_file:
+                text = input_file.read()
+                txt_edit.insert(tk.END, text)
+
+        self.add(tab_place, text=file.name)
 
 class Explorer(ttk.Treeview):
     def __init__(self, *args, **kwargs):
@@ -94,7 +127,7 @@ class Explorer(ttk.Treeview):
             node = self.insert("", "end", text=self.folder_path, open=True)
             self.runner(node, path)
     
-    def file_open(self, event):
+    def file_open(self):
         item_id = self.selection()[0]
         file_tag = self.item(item_id, "tags")[0]
         if file_tag == "file":
@@ -138,22 +171,15 @@ class Application(tk.Frame):
         self.second_place = tk.Frame(self.second_screen)
 
         self.tabpad = Tabs(self.second_place)
-        self.tab_place = tk.Frame(self.tabpad)
 
-        self.txt_edit = CustomText(self.tab_place, font=("Helvetica", self.fsize))
-        self.scrollbar = tk.Scrollbar(self.tab_place, orient="vertical", command=self.txt_edit.yview)
-        self.txt_edit.configure(yscrollcommand=self.scrollbar.set)
+        self.file = File("doc")
+        self.tabpad.add_new(self.file)
 
         self.explorer = Explorer(self.first_place, show="tree")
         self.scrollbar_explorer = tk.Scrollbar(self.first_place, orient="vertical", command=self.explorer.yview)
         self.explorer.configure(yscrollcommand=self.scrollbar_explorer.set)
 
         self.explorer.start("")
-        
-        self.is_linenumbers_on = True
-        
-        self.linenumbers = TextLineNumbers(self.tab_place, width=30)
-        self.linenumbers.attach(self.txt_edit)
 
         self.gavrix = tk.Menu(self.mainmenu, tearoff=0)
         self.gavrix.add_command(label='Open File', command=self.file_open)
@@ -180,36 +206,24 @@ class Application(tk.Frame):
         self.mainmenu.add_cascade(label='View', menu=self.view)
         
         self.positionWidgets()
-
-        self.txt_edit.bind("<<Change>>", self.linenumbers_change)
-        self.txt_edit.bind("<Configure>", self.linenumbers_change)
-        # self.explorer.bind("<Double-1>", self.explorer.file_open(event))
+        
+        self.explorer.bind("<Double-1>", self.explorer_file_open)
 
     def positionWidgets(self):
         self.first_screen.pack(fill="both", expand=True, side="left")
         self.second_screen.pack(fill="both", expand=True, side="left")
-        self.tab_place.pack(fill="both", expand=True, side="left")
         
         self.explorer.pack(fill="both", expand=True, side="left")
         self.scrollbar_explorer.pack(fill="y", side="left")
-        self.linenumbers.pack(fill="y", side="left")
         self.tabpad.pack(fill="both", expand=True, side="left")
-        self.txt_edit.pack(fill="both", expand=True, side="left")
-        self.scrollbar.pack(fill="y", side="left")
 
         self.first_screen.add(self.first_place)
         self.first_screen.add(self.second_screen)
         self.second_screen.add(self.second_place)
-        self.tabpad.add(self.tab_place, text="Cat")
     
     def folder_open(self):
         folder_path = askdirectory()
         self.explorer.start(folder_path)
-
-    def linenumbers_change(self, event):
-        """Redraws the line numbering"""
-        if self.is_linenumbers_on:
-            self.linenumbers.redraw(self.fsize)
 
     def change_scale(self,s):
         """Changes the font size of the whole document, supports 5 different sizes"""
@@ -258,20 +272,25 @@ class Application(tk.Frame):
 
     def file_open(self):
         """Opens the file that user wants to edit"""
-        self.path_to_file = askopenfilename(
+        path_to_file = askopenfilename(
                 filetypes=[("All files", "*.*"), ("Text files", "*.txt")]
         )
-        if not self.path_to_file:
+        if not path_to_file:
             return
-        self.txt_edit.delete("1.0", tk.END)
-        with open(self.path_to_file, "r") as input_file:
-            text = input_file.read()
-            self.txt_edit.insert(tk.END, text)
-        self.master.title(f"Gavrix - {self.path_to_file}")
+        file = File("doc", path_to_file)
+        self.tabpad.add_new(file)
+        self.master.title(f"Gavrix - {path_to_file}")
+
+    def explorer_file_open(self, event):
+        path_to_file = self.explorer.file_open()
+        if path_to_file:
+            file = File("doc", path_to_file)
+            self.tabpad.add_new(file)
+            self.master.title(f"Gavrix - {path_to_file}")
 
     def file_close(self):
         """Closes the file that user has opened"""
-        self.txt_edit.delete("1.0", tk.END)
+        self.tabpad.forget(self.tabpad.select())
         self.master.title(f"Gavrix - NewFile.txt")
         self.path_to_file = 0
 
