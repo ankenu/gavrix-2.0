@@ -1,0 +1,14 @@
+{
+    "themes": {
+            "Light":{
+                    "text_color": "Black",
+                    "line_num_color": "Black",
+                    "background_color": "Purple"
+                },
+            "Dark":{
+                    "text_color": "Light Grey",
+                    "line_num_color": "Light Grey",
+                    "background_color": "Dark Grey"
+                }
+    }
+}
