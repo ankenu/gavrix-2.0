@@ -3,14 +3,21 @@ from tkinter import ttk
 from tkinter.filedialog import askopenfilename, asksaveasfilename, askdirectory
 #sudo apt install python3-pil.imagetk
 from PIL import Image, ImageTk
+#pip install python-magic
+import magic
 import os
 
 class File:
     def __init__(self, TypeTag, FilePath=""):
+        self.tab_widget = None
         self.widget = None
         self.tag = TypeTag
         self.path = FilePath
         self.name = 'NewFile.txt' if not FilePath else os.path.basename(FilePath)
+
+class Interface:
+    def __init__(self, FolderPath):
+        self.folder_path = FolderPath
 
 class CustomText(tk.Text):
     def __init__(self, *args, **kwargs):
@@ -60,9 +67,12 @@ class TextLineNumbers(tk.Canvas):
         while True :
             dline= self.textwidget.dlineinfo(i)
             if dline is None: break
-            y = dline[1]
             linenum = str(i).split(".")[0]
-            self.create_text(2, y, anchor="nw", text=linenum, font=("TkDefaultFont", font_size-2))
+
+            x = 60-15*len(linenum)
+            y = dline[1]
+
+            self.create_text(x, y, anchor="nw", text=linenum, font=("TkDefaultFont", font_size-2), fill='white')
             i = self.textwidget.index("%s+1line" % i)
 
 class Tabs(ttk.Notebook):
@@ -71,31 +81,38 @@ class Tabs(ttk.Notebook):
         self.tabs_collection = {} # { index, file }
     
     def add_new(self, file):
-        tab_place = tk.Frame(self)
-        if file.tag == "doc":
-            txt_edit = CustomText(tab_place, font=("Helvetica", 14))  #self.fsize 14
-            scrollbar = tk.Scrollbar(tab_place, orient="vertical", command=txt_edit.yview)
+        tab_place = ttk.Frame(self)
+        tab_place.pack(fill="both", expand=True, side="left")
+        if file.tag[0] == "t":
+            file.widget = txt_edit = CustomText(tab_place, font=("Helvetica", 14))  #self.fsize 14
+            scrollbar = ttk.Scrollbar(tab_place, orient="vertical", command=txt_edit.yview)
             txt_edit.configure(yscrollcommand=scrollbar.set)
             
-            linenumbers = TextLineNumbers(tab_place, width=30)
+            linenumbers = TextLineNumbers(tab_place, width=60)
             linenumbers.attach(txt_edit)
 
-            tab_place.pack(fill="both", expand=True, side="left")
             linenumbers.pack(fill="y", side="left")
+            scrollbar.pack(fill="y", side="right", padx=txt_edit.winfo_width())
             txt_edit.pack(fill="both", expand=True, side="left")
-            scrollbar.pack(fill="y", side="left")
 
             txt_edit.bind("<<Change>>", linenumbers.linenumbers_change)
             txt_edit.bind("<Configure>", linenumbers.linenumbers_change)
+        
+            if file.path != "":
+                txt_edit.delete("1.0", tk.END)
+                with open(file.path, "r") as input_file:
+                    text = input_file.read()
+                    txt_edit.insert(tk.END, text)
 
-            file.widget = tab_place
+        if file.tag[0] == "i":
+            load = Image.open(file.path)
+            render = ImageTk.PhotoImage(load)
+            img_label = tk.Label(tab_place, image=render)
+            img_label.image = render
+            img_label.place(x=0, y=0)
+            img_label.pack(fill="both", expand=True, side="left")
 
-        if file.path != "":
-            txt_edit.delete("1.0", tk.END)
-            with open(file.path, "r") as input_file:
-                text = input_file.read()
-                txt_edit.insert(tk.END, text)
-
+        file.tab_widget = tab_place
         self.add(tab_place, text=file.name)
 
 class Explorer(ttk.Treeview):
@@ -149,13 +166,20 @@ class Explorer(ttk.Treeview):
             # self.master.title(f"Gavrix - {self.path_to_file}")
             return path
 
-class Application(tk.Frame):
+class Application(ttk.Frame):
     def __init__(self, master=None, title="<application>", **kwargs):
         super().__init__(master, **kwargs)
         self.fsize = 12
         self.master.title(title)
+
+        style = ttk.Style(self.master)
+        self.master.tk.call('source', 'styles/gavrix/gavrix.tcl')
+        style.theme_use('gavrix')
+
         self.mainmenu = tk.Menu(self.master)
         self.master.config(menu=self.mainmenu)
+
+        self.interface = Interface("")
 
         self.pack(fill="both", expand=True)
         self.createWidgets()
@@ -165,21 +189,21 @@ class Application(tk.Frame):
         self.path_to_folder = ""
         self.is_folder_explorer_on = False
         
-        self.first_screen = ttk.PanedWindow(self, orient="horizontal")
-        self.second_screen = ttk.PanedWindow(self.first_screen, orient="horizontal")
+        self.first_screen = tk.PanedWindow(self, orient="horizontal")
+        self.second_screen = tk.PanedWindow(self.first_screen, orient="horizontal")
         self.first_place = tk.Frame(self.first_screen)
-        self.second_place = tk.Frame(self.second_screen)
+        self.second_place = ttk.Frame(self.second_screen)
 
         self.tabpad = Tabs(self.second_place)
 
-        self.file = File("doc")
+        self.file = File("t")
         self.tabpad.add_new(self.file)
 
         self.explorer = Explorer(self.first_place, show="tree")
-        self.scrollbar_explorer = tk.Scrollbar(self.first_place, orient="vertical", command=self.explorer.yview)
+        self.scrollbar_explorer = ttk.Scrollbar(self.first_place, orient="vertical", command=self.explorer.yview)
         self.explorer.configure(yscrollcommand=self.scrollbar_explorer.set)
 
-        self.explorer.start("")
+        self.explorer.start(self.interface.folder_path)
 
         self.gavrix = tk.Menu(self.mainmenu, tearoff=0)
         self.gavrix.add_command(label='Open File', command=self.file_open)
@@ -213,16 +237,19 @@ class Application(tk.Frame):
         self.first_screen.pack(fill="both", expand=True, side="left")
         self.second_screen.pack(fill="both", expand=True, side="left")
         
+        self.scrollbar_explorer.pack(fill="y", side="right")
         self.explorer.pack(fill="both", expand=True, side="left")
-        self.scrollbar_explorer.pack(fill="y", side="left")
         self.tabpad.pack(fill="both", expand=True, side="left")
 
         self.first_screen.add(self.first_place)
         self.first_screen.add(self.second_screen)
         self.second_screen.add(self.second_place)
     
-    def folder_open(self):
+    def folder_open(self, event=None):
         folder_path = askdirectory()
+        if not folder_path:
+            return
+        self.interface.folder_path = folder_path
         self.explorer.start(folder_path)
 
     def change_scale(self,s):
@@ -277,14 +304,16 @@ class Application(tk.Frame):
         )
         if not path_to_file:
             return
-        file = File("doc", path_to_file)
+        tag = magic.from_file(path_to_file, mime=True)
+        file = File(tag, path_to_file)
         self.tabpad.add_new(file)
         self.master.title(f"Gavrix - {path_to_file}")
 
     def explorer_file_open(self, event):
         path_to_file = self.explorer.file_open()
         if path_to_file:
-            file = File("doc", path_to_file)
+            tag = magic.from_file(path_to_file, mime=True)
+            file = File(tag, path_to_file)
             self.tabpad.add_new(file)
             self.master.title(f"Gavrix - {path_to_file}")
 
