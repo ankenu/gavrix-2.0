@@ -8,7 +8,7 @@ class JsonTheme():
     def __init__(self):
         self.file_path = "themes/theme.json"
         self.data = {}
-        self.data["themes"] = []
+        self.data["themes"] = {}
         self.data["themes"].append({
             "Light":{
                     "text_color": "Dark Grey",
@@ -23,9 +23,6 @@ class JsonTheme():
                     "background_color": "Dark Grey"
                     }
             })
-        #self.text_color = "Black"
-        #self.bg_color = "Light Grey"
-        #self.line_num_color = "Black"
         
     def check(self):    
         try:
