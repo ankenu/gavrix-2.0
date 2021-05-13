@@ -6,6 +6,42 @@ from PIL import Image, ImageTk
 #pip install python-magic
 import magic
 import os
+import json
+
+class JsonTheme():
+    def __init__(self):
+        self.file_path = "themes/theme.json"
+        self.data = {}
+        self.data["themes"] = {}
+        self.data["themes"]["Light"] = {
+                    "text_color": "Dark Grey",
+                    "line_num_color": "Dark Grey",
+                    "background_color": "White"
+                }
+        self.data["themes"]["Dark"] = {
+                    "text_color": "Light Grey",
+                    "line_num_color": "Light Grey",
+                    "background_color": "Dark Grey"
+                    }
+        
+    def check(self):    
+        try:
+            open(self.file_path, "r")
+        except IOError:
+            json.dump(self.data, open(self.file_path, "w+"), indent=4)
+
+    def read(self):   
+        self.file = open(self.file_path, "r")
+        self.file_data = json.loads(self.file.read())
+    
+        self.theme_id = "Light"
+        self.text_color = self.file_data["themes"][self.theme_id]["text_color"]
+        self.bg_color = self.file_data["themes"][self.theme_id]["background_color"]
+        self.line_num_color = self.file_data["themes"][self.theme_id]["line_num_color"]
+
+json_file = JsonTheme()
+json_file.check()
+json_file.read()
 
 class File:
     def __init__(self, TypeTag, FilePath=""):
@@ -48,7 +84,7 @@ class CustomText(tk.Text):
 
 class TextLineNumbers(tk.Canvas):
     def __init__(self, *args, **kwargs):
-        tk.Canvas.__init__(self, *args, **kwargs)
+        tk.Canvas.__init__(self, *args, **kwargs, bg = json_file.bg_color, highlightbackground = json_file.bg_color)
         self.textwidget = None
 
     def attach(self, text_widget):
@@ -72,7 +108,7 @@ class TextLineNumbers(tk.Canvas):
             x = 60-15*len(linenum)
             y = dline[1]
 
-            self.create_text(x, y, anchor="nw", text=linenum, font=("TkDefaultFont", font_size-2), fill='white')
+            self.create_text(x, y, anchor="nw", text=linenum, font=("TkDefaultFont", font_size-2), fill = json_file.text_color)
             i = self.textwidget.index("%s+1line" % i)
 
 class Tabs(ttk.Notebook):
@@ -118,6 +154,13 @@ class Tabs(ttk.Notebook):
 class Explorer(ttk.Treeview):
     def __init__(self, *args, **kwargs):
         ttk.Treeview.__init__(self, *args, **kwargs)
+        ttk.Style().configure(
+            "Treeview", 
+            background = json_file.bg_color, 
+            foreground = json_file.text_color, 
+            fieldbackground = json_file.bg_color,
+            highlightbackground = json_file.bg_color,
+            bordercolor = json_file.bg_color)
         self.folder_path = ""
 
     def runner(self, parent, path):
@@ -169,6 +212,7 @@ class Explorer(ttk.Treeview):
 class Application(ttk.Frame):
     def __init__(self, master=None, title="<application>", **kwargs):
         super().__init__(master, **kwargs)
+        #self.configure(bg = JsonTheme.bg_color)
         self.fsize = 12
         self.master.title(title)
 
@@ -176,7 +220,12 @@ class Application(ttk.Frame):
         self.master.tk.call('source', 'styles/gavrix/gavrix.tcl')
         style.theme_use('gavrix')
 
-        self.mainmenu = tk.Menu(self.master)
+        self.mainmenu = tk.Menu(
+            self.master, 
+            bg = json_file.bg_color, 
+            fg = json_file.text_color,
+            activebackground = json_file.bg_color,
+            activeforeground = json_file.text_color)
         self.master.config(menu=self.mainmenu)
 
         self.interface = Interface("")
@@ -205,33 +254,68 @@ class Application(ttk.Frame):
 
         self.explorer.start(self.interface.folder_path)
 
-        self.gavrix = tk.Menu(self.mainmenu, tearoff=0)
-        self.gavrix.add_command(label='Open File', command=self.file_open)
-        self.gavrix.add_command(label='Open Folder', command=self.folder_open) 
+        self.gavrix = tk.Menu(
+            self.mainmenu, 
+            tearoff=0,
+            bg = json_file.bg_color, 
+            fg = json_file.text_color,
+            activebackground = json_file.bg_color,
+            activeforeground = json_file.text_color)
+        self.gavrix.add_command(label="Open File", command=self.file_open)
+        self.gavrix.add_command(label="Open Folder", command=self.folder_open) 
 
         self.gavrix.add_separator()
-        self.gavrix.add_command(label='Save', command=self.save)
-        self.gavrix.add_command(label='Save as', command=self.save_as)
+        self.gavrix.add_command(label="Save", command=self.save)
+        self.gavrix.add_command(label="Save as", command=self.save_as)
         self.gavrix.add_separator()
-        self.gavrix.add_command(label='Close', command=self.file_close)
+        self.gavrix.add_command(label="Close", command=self.file_close)
         
-        self.view = tk.Menu(self.mainmenu, tearoff=0)
+        self.view = tk.Menu(
+            self.mainmenu, 
+            tearoff=0,
+            bg = json_file.bg_color, 
+            fg = json_file.text_color,
+            activebackground = json_file.bg_color,
+            activeforeground = json_file.text_color)
         
-        self.scale = tk.Menu(self.mainmenu, tearoff=0)
+        self.scale = tk.Menu(
+            self.mainmenu, 
+            tearoff=0,
+            bg = json_file.bg_color, 
+            fg = json_file.text_color,
+            activebackground = json_file.bg_color,
+            activeforeground = json_file.text_color)
         self.scale_sizes = dict([("25%", 4), ("50%", 8), ("75%", 12), ("100%", 16), ("125%", 20)])
         self.scale_sizes_percent = list(self.scale_sizes.keys())
         for percent in self.scale_sizes_percent:
             self.scale.add_command(label=percent, command=lambda n=self.scale_sizes[percent]: self.change_scale(n))
         
-        self.view.add_command(label='Line numbers: On', command=self.switch)
-        self.view.add_cascade(label='Scale: 75%', menu=self.scale)
+        self.themes = tk.Menu(
+            self.mainmenu, 
+            tearoff=0,
+            bg = json_file.bg_color, 
+            fg = json_file.text_color,
+            activebackground = json_file.bg_color,
+            activeforeground = json_file.text_color)
+        self.themes.add_command(label="Light", command=self.light_theme)
+        self.themes.add_command(label="Dark", command=self.dark_theme)
+        
+        self.view.add_command(label="Line numbers: On", command=self.switch)
+        self.view.add_cascade(label="Scale: 75%", menu=self.scale)
+        self.view.add_cascade(label="Theme", menu=self.themes)
 
-        self.mainmenu.add_cascade(label='Gavrix', menu=self.gavrix)
-        self.mainmenu.add_cascade(label='View', menu=self.view)
+        self.mainmenu.add_cascade(label="Gavrix", menu=self.gavrix)
+        self.mainmenu.add_cascade(label="View", menu=self.view)
         
         self.positionWidgets()
         
         self.explorer.bind("<Double-1>", self.explorer_file_open)
+
+    def light_theme(self):
+        json_file.theme_id = "Light"
+
+    def dark_theme(self):
+        json_file.theme_id = "Dark"
 
     def positionWidgets(self):
         self.first_screen.pack(fill="both", expand=True, side="left")
