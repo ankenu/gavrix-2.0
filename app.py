@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 from tkinter.filedialog import askopenfilename, asksaveasfilename, askdirectory
+import tkinter.font as tkfont
 #sudo apt install python3-pil.imagetk
 from PIL import Image, ImageTk
 #pip install python-magic
@@ -16,12 +17,19 @@ class File:
         self.name = 'NewFile.txt' if not FilePath else os.path.basename(FilePath)
 
 class Interface:
-    def __init__(self, FolderPath):
-        self.folder_path = FolderPath
+    def __init__(self):
+        self.folder_path = ""
+        self.tabulation = 4
+
+interface = Interface()
 
 class CustomText(tk.Text):
     def __init__(self, *args, **kwargs):
         tk.Text.__init__(self, *args, **kwargs)
+
+        font = tkfont.Font(font=self['font'])
+        tab = font.measure(" " * interface.tabulation)
+        self.config(tabs=tab)
            
         self._orig = self._w + "_orig"
         self.tk.call("rename", self._w, self._orig)
@@ -72,7 +80,7 @@ class TextLineNumbers(tk.Canvas):
             x = 60-15*len(linenum)
             y = dline[1]
 
-            self.create_text(x, y, anchor="nw", text=linenum, font=("TkDefaultFont", font_size-2), fill='white')
+            self.create_text(x, y, anchor="nw", text=linenum, font=("TkDefaultFont", font_size-2), fill="#bbb5eb")
             i = self.textwidget.index("%s+1line" % i)
 
 class Tabs(ttk.Notebook):
@@ -81,28 +89,43 @@ class Tabs(ttk.Notebook):
         self.tabs_collection = {} # { index, file }
     
     def add_new(self, file):
+        """Adds new tab with frame"""
         tab_place = ttk.Frame(self)
         tab_place.pack(fill="both", expand=True, side="left")
         if file.tag[0] == "t":
-            file.widget = txt_edit = CustomText(tab_place, font=("Helvetica", 14))  #self.fsize 14
-            scrollbar = ttk.Scrollbar(tab_place, orient="vertical", command=txt_edit.yview)
-            txt_edit.configure(yscrollcommand=scrollbar.set)
+            file.widget = self.txt_edit = CustomText(tab_place, font=("Droid Sans Fallback", 11), highlightthickness=0, borderwidth=0, background="white")  #self.fsize 14
+            self.scrollview = CustomText(tab_place, width=60, font=("Helvetica", 2), borderwidth=0)
+            self.scrollbar = ttk.Scrollbar(tab_place, orient="vertical")
+            # txt_edit.configure(yscrollcommand=scrollbar.set)
             
-            linenumbers = TextLineNumbers(tab_place, width=60)
-            linenumbers.attach(txt_edit)
+            self.scrollbar['command'] = self.on_scrollbar
+            self.txt_edit['yscrollcommand'] = self.on_textscroll_txt_edit
+            # self.scrollview['yscrollcommand'] = self.on_textscroll_scrollview
 
-            linenumbers.pack(fill="y", side="left")
-            scrollbar.pack(fill="y", side="right", padx=txt_edit.winfo_width())
-            txt_edit.pack(fill="both", expand=True, side="left")
+            self.linenumbers = TextLineNumbers(tab_place, width=60)
+            self.linenumbers.attach(self.txt_edit)
 
-            txt_edit.bind("<<Change>>", linenumbers.linenumbers_change)
-            txt_edit.bind("<Configure>", linenumbers.linenumbers_change)
-        
+            # scrollview.attach(txt_edit)
+
+            self.linenumbers.pack(fill="y", side="left")
+            self.scrollbar.pack(fill="y", side="right", padx=self.txt_edit.winfo_width())
+            self.txt_edit.pack(fill="both", expand=True, side="left")
+            self.scrollview.pack(fill="y", side="left")
+
+            self.txt_edit.bind("<<Change>>", self.linenumbers.linenumbers_change)
+            self.txt_edit.bind("<Configure>", self.linenumbers.linenumbers_change)
+            self.txt_edit.bind("<<Modified>>", self.update)
+
             if file.path != "":
-                txt_edit.delete("1.0", tk.END)
+                self.txt_edit.delete("1.0", tk.END)
                 with open(file.path, "r") as input_file:
                     text = input_file.read()
-                    txt_edit.insert(tk.END, text)
+                    self.txt_edit.insert(tk.END, text)
+                self.scrollview.delete("1.0", tk.END)
+                with open(file.path, "r") as input_file:
+                    text = input_file.read()
+                    self.scrollview.insert(tk.END, text)
+                self.scrollview.config(state='disabled')
 
         if file.tag[0] == "i":
             load = Image.open(file.path)
@@ -114,6 +137,31 @@ class Tabs(ttk.Notebook):
 
         file.tab_widget = tab_place
         self.add(tab_place, text=file.name)
+
+    def on_scrollbar(self, *args):
+        """Scrolls both text widgets when the scrollbar is moved"""
+        self.txt_edit.yview(*args)
+        self.scrollview.yview(*args)
+
+    def on_textscroll_scrollview(self, *args):
+        """Moves the scrollbar and scrolls text widgets when the mousewheel
+        is moved on a text widget"""
+        # self.on_scrollbar('moveto', args[0])
+    
+    def on_textscroll_txt_edit(self, *args):
+        """Moves the scrollbar and scrolls text widgets when the mousewheel
+        is moved on a text widget"""
+        self.scrollbar.set(*args)
+        self.on_scrollbar('moveto', args[0])
+    
+    def update(self, event):
+        print(self.scrollbar.get())
+        self.txt_edit.edit_modified(False)
+        input = self.txt_edit.get("1.0",'end-1c')
+        self.scrollview.config(state='normal')
+        self.scrollview.delete("1.0", tk.END)
+        self.scrollview.insert(tk.END, input)
+        self.scrollview.config(state='disabled')
 
 class Explorer(ttk.Treeview):
     def __init__(self, *args, **kwargs):
@@ -176,10 +224,8 @@ class Application(ttk.Frame):
         self.master.tk.call('source', 'styles/gavrix/gavrix.tcl')
         style.theme_use('gavrix')
 
-        self.mainmenu = tk.Menu(self.master)
+        self.mainmenu = tk.Menu(self.master, borderwidth="0")
         self.master.config(menu=self.mainmenu)
-
-        self.interface = Interface("")
 
         self.pack(fill="both", expand=True)
         self.createWidgets()
@@ -203,7 +249,7 @@ class Application(ttk.Frame):
         self.scrollbar_explorer = ttk.Scrollbar(self.first_place, orient="vertical", command=self.explorer.yview)
         self.explorer.configure(yscrollcommand=self.scrollbar_explorer.set)
 
-        self.explorer.start(self.interface.folder_path)
+        self.explorer.start(interface.folder_path)
 
         self.gavrix = tk.Menu(self.mainmenu, tearoff=0)
         self.gavrix.add_command(label='Open File', command=self.file_open)
@@ -249,7 +295,7 @@ class Application(ttk.Frame):
         folder_path = askdirectory()
         if not folder_path:
             return
-        self.interface.folder_path = folder_path
+        interface.folder_path = folder_path
         self.explorer.start(folder_path)
 
     def change_scale(self,s):
