@@ -39,6 +39,7 @@ class JsonTheme():
         self.text_color = self.file_data["themes"][self.theme_id]["text_color"]
         self.bg_color = self.file_data["themes"][self.theme_id]["background_color"]
         self.line_num_color = self.file_data["themes"][self.theme_id]["line_num_color"]
+        self.line_num_text_color = self.file_data["themes"][self.theme_id]["line_num_text_color"]
 
 json_file = JsonTheme()
 json_file.check()
@@ -116,11 +117,7 @@ class TextLineNumbers(tk.Canvas):
             x = 60-15*len(linenum)
             y = dline[1]
 
-<<<<<<< HEAD
-            self.create_text(x, y, anchor="nw", text=linenum, font=("TkDefaultFont", font_size-2), fill = json_file.text_color)
-=======
-            self.create_text(x, y, anchor="nw", text=linenum, font=("TkDefaultFont", font_size-2), fill="#bbb5eb")
->>>>>>> fickmann
+            self.create_text(x, y, anchor="nw", text=linenum, font=("TkDefaultFont", font_size-2), fill = json_file.line_num_text_color)
             i = self.textwidget.index("%s+1line" % i)
 
 class Tabs(ttk.Notebook):
@@ -272,16 +269,13 @@ class Application(ttk.Frame):
         self.master.tk.call('source', 'styles/gavrix/gavrix.tcl')
         style.theme_use('gavrix')
 
-<<<<<<< HEAD
         self.mainmenu = tk.Menu(
             self.master, 
             bg = json_file.bg_color, 
             fg = json_file.text_color,
             activebackground = json_file.bg_color,
-            activeforeground = json_file.text_color)
-=======
-        self.mainmenu = tk.Menu(self.master, borderwidth="0")
->>>>>>> fickmann
+            activeforeground = json_file.text_color,
+            borderwidth="0")
         self.master.config(menu=self.mainmenu)
 
         self.pack(fill="both", expand=True)
