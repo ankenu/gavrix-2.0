@@ -395,7 +395,12 @@ class Application(ttk.Frame):
 
         self.find_button.pack(side="left")
         self.replace_button.pack(side="left", padx=5)
+        self.find_dialogue.protocol("WM_DELETE_WINDOW", self.updateText)
         self.find_dialogue.mainloop()
+
+    def updateText(self):
+        self.tabpad.txt_edit.tag_config("match", background="white", foreground="black")
+        self.find_dialogue.destroy()
 
     def find_text(self):
         word = self.find_input.get()
