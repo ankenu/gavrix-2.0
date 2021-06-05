@@ -195,7 +195,7 @@ class Tabs(ttk.Notebook):
         self.on_scrollbar('moveto', args[0])
     
     def update(self, event):
-        print(self.scrollbar.get())
+        #print(self.scrollbar.get())
         self.txt_edit.edit_modified(False)
         input = self.txt_edit.get("1.0",'end-1c')
         self.scrollview.config(state='normal')
@@ -259,7 +259,7 @@ class Explorer(ttk.Treeview):
             #     text = input_file.read()
             #     self.txt_edit.insert(tk.END, text)
             # self.master.title(f"Gavrix - {self.path_to_file}")
-            return path
+            return path       
 
 class Application(ttk.Frame):
     def __init__(self, master=None, title="<application>", **kwargs):
@@ -288,7 +288,7 @@ class Application(ttk.Frame):
         self.path_to_file = 0
         self.path_to_folder = ""
         self.is_folder_explorer_on = False
-        
+
         self.first_screen = tk.PanedWindow(self, orient="horizontal")
         self.second_screen = tk.PanedWindow(self.first_screen, orient="horizontal")
         self.first_place = tk.Frame(self.first_screen)
@@ -357,16 +357,78 @@ class Application(ttk.Frame):
 
         self.mainmenu.add_cascade(label="Gavrix", menu=self.gavrix)
         self.mainmenu.add_cascade(label="View", menu=self.view)
+        self.mainmenu.add_command(label="Find", command=self.find)
         
         self.positionWidgets()
         
         self.explorer.bind("<Double-1>", self.explorer_file_open)
+    
+    def find(self, event = None):
+        self.find_dialogue = tk.Toplevel()
+        self.find_dialogue.geometry("375x150")
+        self.find_dialogue.title("Find")
+        self.find_dialogue.resizable(1,0)
 
+        self.find_frame = tk.Frame(self.find_dialogue)
+        self.find_frame.pack(pady=5, fill="both", expand=True)
+
+        self.replace_frame = tk.Frame(self.find_dialogue)
+        self.replace_frame.pack(pady=5, fill="both", expand=True)
+
+        self.button_frame = tk.Frame(self.find_dialogue)
+        self.button_frame.pack(pady=5, padx=15, fill="both")
+
+        self.text_find_label = ttk.Label(self.find_frame, text ="Find: ", width=8)
+        self.text_replace_label = ttk.Label(self.replace_frame, text= "Replace: ", width=8)
+
+        self.find_input = ttk.Entry(self.find_frame, width = 30)
+        self.replace_input =ttk.Entry(self.replace_frame, width=30)
+
+        self.find_button = ttk.Button(self.button_frame, text ="Find", command= self.find_text)
+        self.replace_button= ttk.Button(self.button_frame, text= "Replace", command= self.replace)
+
+        self.text_find_label.pack(side="left")
+        self.text_replace_label.pack(side="left")
+
+        self.find_input.pack(side="left", fill="x", expand=True)
+        self.replace_input.pack(side="left", fill="x", expand=True)
+
+        self.find_button.pack(side="left")
+        self.replace_button.pack(side="left", padx=5)
+        self.find_dialogue.mainloop()
+
+    def find_text(self):
+        word = self.find_input.get()
+        self.tabpad.txt_edit.tag_remove("match", "1.0", tk.END)
+        matches = 0
+        if word:
+            start_pos = "1.0"
+            while True:
+                start_pos = self.tabpad.txt_edit.search(word, start_pos, stopindex=tk.END)
+                if not start_pos:
+                    break
+                end_pos =f"{start_pos}+ {len(word)}c"
+                self.tabpad.txt_edit.tag_add("match", start_pos, end_pos)
+                matches +=1
+                start_pos = end_pos
+                self.tabpad.txt_edit.tag_config("match", foreground ="yellow", background= "green")
+    
+    def replace(self):
+        word = self.find_input.get()
+        replace_text = self.replace_input.get()
+        content= self.tabpad.txt_edit.get(1.0, tk.END)
+
+        new_content = content.replace(word, replace_text)
+        self.tabpad.txt_edit.delete(1.0, tk.END)
+        self.tabpad.txt_edit.insert(1.0, new_content)
+        
     def light_theme(self):
         json_file.theme_id = "Light"
+        self.updateWidgets()
 
     def dark_theme(self):
         json_file.theme_id = "Dark"
+        self.updateWidgets()
 
     def positionWidgets(self):
         self.first_screen.pack(fill="both", expand=True, side="left")
@@ -433,7 +495,7 @@ class Application(ttk.Frame):
             return
         with open(path_to_an_file, "w") as output_an_file:
             text = self.txt_edit.get("1.0", tk.END)
-            output_file.write(text)
+            output_an_file.write(text)
         self.master.title(f"Gavrix - {path_to_an_file}")
 
     def file_open(self):
