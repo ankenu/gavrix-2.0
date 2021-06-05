@@ -1,15 +1,16 @@
 {
     "themes": {
-            "Light":{
-                    "text_color": "Red",
-                    "line_num_color": "#bbb5eb",
-                    "line_num_text_color": "#bbb5eb",
-                    "background_color": "Green"
-                },
-            "Dark":{
-                    "text_color": "Light Grey",
-                    "line_num_color": "Light Grey",
-                    "background_color": "Dark Grey"
-                }
+        "Light": {
+            "text_color": "Black",
+            "line_num_color": "Dark Grey",
+            "line_num_text_color": "#bbb5eb",
+            "background_color": "White"
+        },
+        "Dark": {
+            "text_color": "Light Grey",
+            "line_num_color": "Light Grey",
+            "line_num_text_color": "#bbb5eb",
+            "background_color": "Dark Grey"
+        }
     }
 }

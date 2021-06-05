@@ -15,13 +15,15 @@ class JsonTheme():
         self.data = {}
         self.data["themes"] = {}
         self.data["themes"]["Light"] = {
-                    "text_color": "Dark Grey",
+                    "text_color": "Black",
                     "line_num_color": "Dark Grey",
+                    "line_num_text_color": "#bbb5eb",
                     "background_color": "White"
                 }
         self.data["themes"]["Dark"] = {
                     "text_color": "Light Grey",
                     "line_num_color": "Light Grey",
+                    "line_num_text_color": "#bbb5eb",
                     "background_color": "Dark Grey"
                     }
         
@@ -95,14 +97,15 @@ class TextLineNumbers(tk.Canvas):
     def __init__(self, *args, **kwargs):
         tk.Canvas.__init__(self, *args, **kwargs, bg = json_file.bg_color, highlightbackground = json_file.bg_color)
         self.textwidget = None
+        self.is_on = True
 
     def attach(self, text_widget):
         self.textwidget = text_widget
     
     def linenumbers_change(self, event):
         """Redraws the line numbering"""
-        # if self.is_linenumbers_on:
-        self.redraw(14) #self.fsize
+        if self.is_on:
+            self.redraw(14) #self.fsize
         
     def redraw(self, font_size, *args):
         """Redraw line numbers"""
@@ -387,24 +390,28 @@ class Application(ttk.Frame):
     def change_scale(self,s):
         """Changes the font size of the whole document, supports 5 different sizes"""
         self.fsize = s
-        self.txt_edit.config(font=('Helvetica', s))
-        self.txt_edit.insert(tk.END, "")
+        self.tabpad.txt_edit.config(font=('Helvetica', s))
+        self.tabpad.txt_edit.insert(tk.END, "")
         self.view.entryconfigure(1, label = "Scale: "+str(int(6.25*s))+"%")
 
     def switch(self):
         """Toggles the button state"""
-        if self.is_linenumbers_on:
+        if self.tabpad.linenumbers.is_on:
             self.view.entryconfigure(0, label ="Line numbers: Off")
-            self.is_linenumbers_on = False
-            self.linenumbers.pack_forget()
+            self.tabpad.linenumbers.is_on = False
+            self.tabpad.linenumbers.pack_forget()
         else:
             self.view.entryconfigure(0, label ="Line numbers: On")
-            self.is_linenumbers_on = True
-            
-            self.txt_edit.pack_forget()
-            self.scrollbar.pack_forget()
+            self.tabpad.linenumbers.is_on = True
 
-            self.positionWidgets()
+            self.tabpad.linenumbers.pack_forget()
+            self.tabpad.txt_edit.pack_forget()
+            self.tabpad.scrollview.pack_forget()
+
+            self.tabpad.linenumbers.pack(fill="y", side="left")
+            self.tabpad.txt_edit.pack(fill="both", expand=True, side="left")
+            self.tabpad.scrollview.pack(fill="y", side="left")
+
 
     def save(self):
         """Saves the opened file, if no file is opened - acts like save_as()"""
