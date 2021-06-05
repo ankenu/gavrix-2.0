@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
+from tkinter import messagebox
 from tkinter.filedialog import askopenfilename, asksaveasfilename, askdirectory
 import tkinter.font as tkfont
 #sudo apt install python3-pil.imagetk
@@ -8,6 +9,7 @@ from PIL import Image, ImageTk
 import magic
 import os
 import json
+import sys
 
 class JsonTheme():
     def __init__(self):
@@ -26,6 +28,7 @@ class JsonTheme():
                     "line_num_text_color": "#bbb5eb",
                     "background_color": "Dark Grey"
                     }
+        self.data["current"] = "Light"
         
     def check(self):    
         try:
@@ -37,7 +40,7 @@ class JsonTheme():
         self.file = open(self.file_path, "r")
         self.file_data = json.loads(self.file.read())
     
-        self.theme_id = "Light"
+        self.theme_id = self.file_data["current"]
         self.text_color = self.file_data["themes"][self.theme_id]["text_color"]
         self.bg_color = self.file_data["themes"][self.theme_id]["background_color"]
         self.line_num_color = self.file_data["themes"][self.theme_id]["line_num_color"]
@@ -428,12 +431,18 @@ class Application(ttk.Frame):
         self.tabpad.txt_edit.insert(1.0, new_content)
         
     def light_theme(self):
-        json_file.theme_id = "Light"
-        self.updateWidgets()
+        json_file.data["current"] = "Light"
+        json.dump(json_file.data, open(json_file.file_path, "w+"), indent=4)
+        if messagebox.askokcancel("Restart required", "Do you want to restart?"):
+            python = sys.executable
+            os.execl(python, python, * sys.argv)
 
     def dark_theme(self):
-        json_file.theme_id = "Dark"
-        self.updateWidgets()
+        json_file.data["current"] = "Dark"
+        json.dump(json_file.data, open(json_file.file_path, "w+"), indent=4)
+        if messagebox.askokcancel("Restart required", "Do you want to restart?"):
+            python = sys.executable
+            os.execl(python, python, * sys.argv)
 
     def positionWidgets(self):
         self.first_screen.pack(fill="both", expand=True, side="left")

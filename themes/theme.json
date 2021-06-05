@@ -12,5 +12,6 @@
             "line_num_text_color": "#bbb5eb",
             "background_color": "Dark Grey"
         }
-    }
+    },
+    "current": "Dark"
 }
