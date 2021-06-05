@@ -49,7 +49,7 @@ json_file.read()
 
 class File:
     def __init__(self, TypeTag, FilePath=""):
-        self.tab_widget = None
+        # self.tab_widget = None
         self.widget = None
         self.tag = TypeTag
         self.path = FilePath
@@ -59,6 +59,8 @@ class Interface:
     def __init__(self):
         self.folder_path = ""
         self.tabulation = 4
+        self.font_size = 12
+        self.tabs_collection = {} # { index, file }
 
 interface = Interface()
 
@@ -105,9 +107,9 @@ class TextLineNumbers(tk.Canvas):
     def linenumbers_change(self, event):
         """Redraws the line numbering"""
         if self.is_on:
-            self.redraw(14) #self.fsize
+            self.redraw() #self.fsize
         
-    def redraw(self, font_size, *args):
+    def redraw(self, *args):
         """Redraw line numbers"""
         self.delete("all")
 
@@ -117,23 +119,23 @@ class TextLineNumbers(tk.Canvas):
             if dline is None: break
             linenum = str(i).split(".")[0]
 
-            x = 60-15*len(linenum)
+            x = 4*interface.font_size-interface.font_size*len(linenum)
             y = dline[1]
 
-            self.create_text(x, y, anchor="nw", text=linenum, font=("TkDefaultFont", font_size-2), fill = json_file.line_num_text_color)
+            self.create_text(x, y, anchor="nw", text=linenum, font=("TkDefaultFont", interface.font_size), fill = json_file.line_num_text_color)
             i = self.textwidget.index("%s+1line" % i)
 
 class Tabs(ttk.Notebook):
     def __init__(self, *args, **kwargs):
         ttk.Notebook.__init__(self, *args, **kwargs)
-        self.tabs_collection = {} # { index, file }
+        # self.tabs_collection = {} # { index, file }
     
     def add_new(self, file):
         """Adds new tab with frame"""
         tab_place = ttk.Frame(self)
         tab_place.pack(fill="both", expand=True, side="left")
         if file.tag[0] == "t":
-            file.widget = self.txt_edit = CustomText(tab_place, font=("Droid Sans Fallback", 11), highlightthickness=0, borderwidth=0, background="white")  #self.fsize 14
+            file.widget = self.txt_edit = CustomText(tab_place, font=("Droid Sans Fallback", interface.font_size), highlightthickness=0, borderwidth=0, background="white")  #self.fsize 14
             self.scrollview = CustomText(tab_place, width=60, font=("Helvetica", 2), borderwidth=0)
             self.scrollbar = ttk.Scrollbar(tab_place, orient="vertical")
             # txt_edit.configure(yscrollcommand=scrollbar.set)
@@ -175,8 +177,9 @@ class Tabs(ttk.Notebook):
             img_label.place(x=0, y=0)
             img_label.pack(fill="both", expand=True, side="left")
 
-        file.tab_widget = tab_place
+        # file.tab_widget = tab_place #+-
         self.add(tab_place, text=file.name)
+        interface.tabs_collection[tab_place] = file
 
     def on_scrollbar(self, *args):
         """Scrolls both text widgets when the scrollbar is moved"""
@@ -265,7 +268,6 @@ class Application(ttk.Frame):
     def __init__(self, master=None, title="<application>", **kwargs):
         super().__init__(master, **kwargs)
         #self.configure(bg = JsonTheme.bg_color)
-        self.fsize = 12
         self.master.title(title)
 
         style = ttk.Style(self.master)
@@ -451,9 +453,10 @@ class Application(ttk.Frame):
 
     def change_scale(self,s):
         """Changes the font size of the whole document, supports 5 different sizes"""
-        self.fsize = s
-        self.tabpad.txt_edit.config(font=('Helvetica', s))
-        self.tabpad.txt_edit.insert(tk.END, "")
+        # file = interface.tabs_collection[self.tabpad._nametowidget(self.tabpad.select())]
+        for key, file in interface.tabs_collection.items():
+            file.widget.config(font=('Helvetica', s))
+        interface.font_size = s
         self.view.entryconfigure(1, label = "Scale: "+str(int(6.25*s))+"%")
 
     def switch(self):
