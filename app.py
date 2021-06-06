@@ -6,6 +6,8 @@ import tkinter.font as tkfont
 #sudo apt install python3-pil.imagetk
 from PIL import Image, ImageTk
 #pip install python-magic
+import pickle5 as pickle
+#pip install pickle5
 import magic
 import os
 import json
@@ -102,7 +104,12 @@ class CustomText(tk.Text):
 
 class TextLineNumbers(tk.Canvas):
     def __init__(self, *args, **kwargs):
-        tk.Canvas.__init__(self, *args, **kwargs, bg = json_file.line_num_color, highlightbackground = json_file.line_num_color)
+        tk.Canvas.__init__(
+            self, 
+            *args, 
+            **kwargs, 
+            bg = json_file.line_num_color, 
+            highlightbackground = json_file.line_num_color)
         self.textwidget = None
         self.is_on = True
 
@@ -127,7 +134,12 @@ class TextLineNumbers(tk.Canvas):
             x = 4*interface.font_size-interface.font_size*len(linenum)
             y = dline[1]
 
-            self.create_text(x, y, anchor="nw", text=linenum, font=("TkDefaultFont", interface.font_size), fill = json_file.line_num_text_color)
+            self.create_text(
+                x, 
+                y, 
+                anchor="nw", 
+                text=linenum, 
+                font=("TkDefaultFont", interface.font_size), fill = json_file.line_num_text_color)
             i = self.textwidget.index("%s+1line" % i)
 
 class Tabs(ttk.Notebook):
@@ -530,6 +542,12 @@ class Application(ttk.Frame):
         json_file.file_data["current"] = "Light"
         json.dump(json_file.file_data, open(json_file.file_path, "w+"), indent=4)
         if messagebox.askokcancel("Restart required", "Do you want to restart now?"):
+            for key, file in interface.tabs_collection.items():
+                file.widget = file.widget.get("1.0", tk.END)
+            list_of_files = list(interface.tabs_collection.values())
+            bin_file = open("settings.bin", "wb")
+            pickle.dump(list_of_files, bin_file)
+            bin_file.close()
             python = sys.executable
             os.execl(python, python, * sys.argv)
 
@@ -538,6 +556,12 @@ class Application(ttk.Frame):
         json_file.file_data["current"] = "Dark"
         json.dump(json_file.file_data, open(json_file.file_path, "w+"), indent=4)
         if messagebox.askokcancel("Restart required", "Do you want to restart now?"):
+            for key, file in interface.tabs_collection.items():
+                file.widget = file.widget.get("1.0", tk.END)
+            list_of_files = list(interface.tabs_collection.values())
+            bin_file = open("settings.bin", "wb")
+            pickle.dump(list_of_files, bin_file)
+            bin_file.close()
             python = sys.executable
             os.execl(python, python, * sys.argv)
 
