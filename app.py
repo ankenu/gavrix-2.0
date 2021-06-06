@@ -30,13 +30,15 @@ class JsonTheme():
                     }
         self.data["current"] = "Light"
         
-    def check(self):    
+    def check(self):
+        """Checks whether the theme.json file exists and if it doesn't creates it"""   
         try:
             open(self.file_path, "r")
         except IOError:
             json.dump(self.data, open(self.file_path, "w+"), indent=4)
 
-    def read(self):   
+    def read(self):
+        """Reads the json file to specify the text, background and line numbers colors"""   
         self.file = open(self.file_path, "r")
         self.file_data = json.loads(self.file.read())
     
@@ -418,6 +420,7 @@ class Application(ttk.Frame):
         self.explorer.bind("<Double-1>", self.explorer_file_open)
     
     def find(self, event = None):
+        """Find dialogue window handler, includes the window itself and all of its widgets"""
         self.find_dialogue = tk.Toplevel(bg = json_file.bg_color, 
             highlightbackground = json_file.text_color)
         self.find_dialogue.geometry("375x150")
@@ -491,10 +494,12 @@ class Application(ttk.Frame):
         self.find_dialogue.mainloop()
 
     def updateText(self):
-        self.tabpad.txt_edit.tag_config("match", background="white", foreground="black")
+        """Restores the text color upon closing the dialogue window"""
+        self.tabpad.txt_edit.tag_config("match", background=json_file.bg_color, foreground=json_file.text_color)
         self.find_dialogue.destroy()
 
     def find_text(self):
+        """Finds the specified text in the text field and marks it"""
         word = self.find_input.get()
         self.tabpad.txt_edit.tag_remove("match", "1.0", tk.END)
         matches = 0
@@ -511,6 +516,7 @@ class Application(ttk.Frame):
                 self.tabpad.txt_edit.tag_config("match", foreground ="yellow", background= "green")
     
     def replace(self):
+        """Replaces all found entities with the same specified text"""
         word = self.find_input.get()
         replace_text = self.replace_input.get()
         content= self.tabpad.txt_edit.get(1.0, tk.END)
@@ -520,6 +526,7 @@ class Application(ttk.Frame):
         self.tabpad.txt_edit.insert(1.0, new_content)
         
     def light_theme(self):
+        """Changes the current theme to light in the json file and restarts the program to apply changes"""
         json_file.file_data["current"] = "Light"
         json.dump(json_file.file_data, open(json_file.file_path, "w+"), indent=4)
         if messagebox.askokcancel("Restart required", "Do you want to restart now?"):
@@ -527,6 +534,7 @@ class Application(ttk.Frame):
             os.execl(python, python, * sys.argv)
 
     def dark_theme(self):
+        """Changes the current theme to dark in the json file and restarts the program to apply changes"""
         json_file.file_data["current"] = "Dark"
         json.dump(json_file.file_data, open(json_file.file_path, "w+"), indent=4)
         if messagebox.askokcancel("Restart required", "Do you want to restart now?"):
