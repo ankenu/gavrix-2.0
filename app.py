@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk
+from tkinter import Scrollbar, ttk
 from tkinter import messagebox
 from tkinter.filedialog import askopenfilename, asksaveasfilename, askdirectory
 import tkinter.font as tkfont
@@ -98,7 +98,7 @@ class CustomText(tk.Text):
 
 class TextLineNumbers(tk.Canvas):
     def __init__(self, *args, **kwargs):
-        tk.Canvas.__init__(self, *args, **kwargs, bg = json_file.bg_color, highlightbackground = json_file.bg_color)
+        tk.Canvas.__init__(self, *args, **kwargs, bg = json_file.line_num_color, highlightbackground = json_file.line_num_color)
         self.textwidget = None
         self.is_on = True
 
@@ -123,22 +123,69 @@ class TextLineNumbers(tk.Canvas):
             x = 60-15*len(linenum)
             y = dline[1]
 
-            self.create_text(x, y, anchor="nw", text=linenum, font=("TkDefaultFont", font_size-2), fill = json_file.line_num_text_color)
+            self.create_text(x, y, 
+            anchor="nw", 
+            text=linenum, 
+            font=("TkDefaultFont", font_size-2), 
+            fill = json_file.line_num_text_color)
             i = self.textwidget.index("%s+1line" % i)
 
 class Tabs(ttk.Notebook):
     def __init__(self, *args, **kwargs):
         ttk.Notebook.__init__(self, *args, **kwargs)
+        ttk.Style().configure(
+            "TNotebook", 
+            background = json_file.bg_color, 
+            foreground = json_file.text_color,
+            darkcolor = json_file.bg_color,
+            lightcolor = json_file.text_color, 
+            fieldbackground = json_file.bg_color,
+            highlightbackground = json_file.bg_color,
+            bordercolor = json_file.bg_color,
+            fill=json_file.bg_color)
+        tab_style = ttk.Style()
+        tab_style.configure(
+            "TNotebook.Tab",
+            background = json_file.bg_color, 
+            foreground = json_file.text_color,
+            darkcolor = json_file.bg_color,
+            lightcolor = json_file.text_color, 
+            fieldbackground = json_file.bg_color,
+            highlightbackground = json_file.bg_color,
+            bordercolor = json_file.bg_color,
+            fill=json_file.bg_color)
+
         self.tabs_collection = {} # { index, file }
     
     def add_new(self, file):
         """Adds new tab with frame"""
-        tab_place = ttk.Frame(self)
+        frame_style = ttk.Style()
+        frame_style.configure("TFrame", bg = json_file.bg_color, fg = json_file.text_color,)
+        tab_place = ttk.Frame(self, style="TFrame")
         tab_place.pack(fill="both", expand=True, side="left")
         if file.tag[0] == "t":
-            file.widget = self.txt_edit = CustomText(tab_place, font=("Droid Sans Fallback", 11), highlightthickness=0, borderwidth=0, background="white")  #self.fsize 14
-            self.scrollview = CustomText(tab_place, width=60, font=("Helvetica", 2), borderwidth=0)
-            self.scrollbar = ttk.Scrollbar(tab_place, orient="vertical")
+            file.widget = self.txt_edit = CustomText(
+                tab_place, 
+                font=("Droid Sans Fallback", 11),
+                fg = json_file.text_color, 
+                highlightthickness=0, 
+                borderwidth=0, 
+                background=json_file.bg_color)  #self.fsize 14
+            
+            self.scrollview = CustomText(
+                tab_place, 
+                width=60, 
+                font=("Helvetica", 2), 
+                fg = json_file.text_color,
+                borderwidth=0,
+                highlightbackground=json_file.line_num_color,
+                background=json_file.bg_color)
+
+            scrollbar_style = ttk.Style()
+            scrollbar_style.configure("Vertical.TScrollbar", background = json_file.bg_color)
+            
+            self.scrollbar = ttk.Scrollbar(tab_place, orient="vertical", style="Vertical.TScrollbar")
+            
             # txt_edit.configure(yscrollcommand=scrollbar.set)
             
             self.scrollbar['command'] = self.on_scrollbar
@@ -215,7 +262,8 @@ class Explorer(ttk.Treeview):
             foreground = json_file.text_color, 
             fieldbackground = json_file.bg_color,
             highlightbackground = json_file.bg_color,
-            bordercolor = json_file.bg_color)
+            bordercolor = json_file.bg_color,
+            fill=json_file.bg_color)
         self.folder_path = ""
 
     def runner(self, parent, path):
@@ -267,7 +315,6 @@ class Explorer(ttk.Treeview):
 class Application(ttk.Frame):
     def __init__(self, master=None, title="<application>", **kwargs):
         super().__init__(master, **kwargs)
-        #self.configure(bg = JsonTheme.bg_color)
         self.fsize = 12
         self.master.title(title)
 
@@ -292,10 +339,16 @@ class Application(ttk.Frame):
         self.path_to_folder = ""
         self.is_folder_explorer_on = False
 
-        self.first_screen = tk.PanedWindow(self, orient="horizontal")
-        self.second_screen = tk.PanedWindow(self.first_screen, orient="horizontal")
-        self.first_place = tk.Frame(self.first_screen)
-        self.second_place = ttk.Frame(self.second_screen)
+        self.first_screen = tk.PanedWindow(self, orient="horizontal", bg=json_file.bg_color)
+        self.second_screen = tk.PanedWindow(self.first_screen, orient="horizontal", bg=json_file.bg_color)
+        self.first_place = tk.Frame(self.first_screen, bg=json_file.bg_color)
+        frame_style = ttk.Style()
+        frame_style.configure("TFrame", 
+            bg = json_file.bg_color, 
+            fg = json_file.text_color,
+            activebackground = json_file.bg_color,
+            activeforeground = json_file.text_color)
+        self.second_place = ttk.Frame(self.second_screen, style="TFrame")
 
         self.tabpad = Tabs(self.second_place)
 
@@ -367,28 +420,66 @@ class Application(ttk.Frame):
         self.explorer.bind("<Double-1>", self.explorer_file_open)
     
     def find(self, event = None):
-        self.find_dialogue = tk.Toplevel()
+        self.find_dialogue = tk.Toplevel(bg = json_file.bg_color, 
+            highlightbackground = json_file.text_color)
         self.find_dialogue.geometry("375x150")
         self.find_dialogue.title("Find")
         self.find_dialogue.resizable(1,0)
 
-        self.find_frame = tk.Frame(self.find_dialogue)
+        self.find_frame = tk.Frame(
+            self.find_dialogue, 
+            highlightbackground = json_file.bg_color, 
+            bg = json_file.bg_color)
         self.find_frame.pack(pady=5, fill="both", expand=True)
 
-        self.replace_frame = tk.Frame(self.find_dialogue)
+        self.replace_frame = tk.Frame(
+            self.find_dialogue, 
+            bg = json_file.bg_color, 
+            highlightbackground = json_file.bg_color)
         self.replace_frame.pack(pady=5, fill="both", expand=True)
 
-        self.button_frame = tk.Frame(self.find_dialogue)
+        self.button_frame = tk.Frame(
+            self.find_dialogue, 
+            highlightbackground = json_file.bg_color, 
+            bg = json_file.bg_color)
         self.button_frame.pack(pady=5, padx=15, fill="both")
 
-        self.text_find_label = ttk.Label(self.find_frame, text ="Find: ", width=8)
-        self.text_replace_label = ttk.Label(self.replace_frame, text= "Replace: ", width=8)
+        self.text_find_label = ttk.Label(
+            self.find_frame, 
+            text ="Find: ", 
+            width=8, 
+            background = json_file.bg_color, 
+            foreground = json_file.text_color)
+        self.text_replace_label = ttk.Label(
+            self.replace_frame, 
+            text= "Replace: ", 
+            width=8, 
+            background = json_file.bg_color, 
+            foreground = json_file.text_color)
 
-        self.find_input = ttk.Entry(self.find_frame, width = 30)
-        self.replace_input =ttk.Entry(self.replace_frame, width=30)
+        self.find_input = tk.Entry(
+            self.find_frame, 
+            width = 30, 
+            foreground=json_file.text_color,
+            background=json_file.bg_color)
+        self.replace_input = tk.Entry(
+            self.replace_frame, 
+            width = 30, 
+            foreground=json_file.text_color,
+            background=json_file.bg_color)
 
-        self.find_button = ttk.Button(self.button_frame, text ="Find", command= self.find_text)
-        self.replace_button= ttk.Button(self.button_frame, text= "Replace", command= self.replace)
+        self.find_button = tk.Button(
+            self.button_frame, 
+            text ="Find", 
+            command= self.find_text, 
+            background = json_file.bg_color, 
+            foreground = json_file.text_color)
+        self.replace_button= tk.Button(
+            self.button_frame, 
+            text= "Replace", 
+            command= self.replace, 
+            background = json_file.bg_color, 
+            foreground = json_file.text_color)
 
         self.text_find_label.pack(side="left")
         self.text_replace_label.pack(side="left")
@@ -431,16 +522,16 @@ class Application(ttk.Frame):
         self.tabpad.txt_edit.insert(1.0, new_content)
         
     def light_theme(self):
-        json_file.data["current"] = "Light"
-        json.dump(json_file.data, open(json_file.file_path, "w+"), indent=4)
-        if messagebox.askokcancel("Restart required", "Do you want to restart?"):
+        json_file.file_data["current"] = "Light"
+        json.dump(json_file.file_data, open(json_file.file_path, "w+"), indent=4)
+        if messagebox.askokcancel("Restart required", "Do you want to restart now?"):
             python = sys.executable
             os.execl(python, python, * sys.argv)
 
     def dark_theme(self):
-        json_file.data["current"] = "Dark"
-        json.dump(json_file.data, open(json_file.file_path, "w+"), indent=4)
-        if messagebox.askokcancel("Restart required", "Do you want to restart?"):
+        json_file.file_data["current"] = "Dark"
+        json.dump(json_file.file_data, open(json_file.file_path, "w+"), indent=4)
+        if messagebox.askokcancel("Restart required", "Do you want to restart now?"):
             python = sys.executable
             os.execl(python, python, * sys.argv)
 
