@@ -13,6 +13,7 @@ import magic
 import os
 import json
 import sys
+from gettext import gettext as _
 
 
 class JsonTheme():
@@ -225,14 +226,16 @@ class Tabs(ttk.Notebook):
 
     def add_new(self, file):
         """Add new tab with frame."""
-        if (file.path not in self.path_list) or file.path == "":
+        if ((file.path not in self.path_list) or file.path == "") and file.tag != "data":
+            tab_flag = False
             if file.path != "":
                 self.path_list.append(file.path)
             frame_style = ttk.Style()
             frame_style.configure("TFrame", bg=json_file.bg_color, fg=json_file.text_color,)
             tab_place = ttk.Frame(self, style="TFrame")
             tab_place.pack(fill="both", expand=True, side="left")
-            if file.tag[0] == "t":
+            if (file.tag != "data" or file.tag == "t") and file.tag.find("image") == -1:
+                tab_flag = True
                 if (file.widget):
                     text = file.widget
                 else:
@@ -276,7 +279,8 @@ class Tabs(ttk.Notebook):
                 if file.path == "" and text != "":
                     self.txt_edit.insert(tk.END, text)
 
-            if file.tag[0] == "i":
+            if file.tag.find("image") != -1:
+                tab_flag = True
                 file.widget = None
                 load = Image.open(file.path)
                 render = ImageTk.PhotoImage(load)
@@ -285,11 +289,12 @@ class Tabs(ttk.Notebook):
                 img_label.place(x=0, y=0)
                 img_label.pack(fill="both", expand=True, side="left")
 
-            file_name = file.name
-            if (file.edit):
-                file_name = file_name + "*"
-            self.add(tab_place, text=file_name)
-            self.tabs_collection[tab_place] = file
+            if tab_flag:
+                file_name = file.name
+                if (file.edit):
+                    file_name = file_name + "*"
+                self.add(tab_place, text=file_name)
+                self.tabs_collection[tab_place] = file
 
     def file_edit(self, event):
         """Change tab name when file is being edited."""
@@ -456,17 +461,17 @@ class Application(ttk.Frame):
             fg=json_file.text_color,
             activebackground=json_file.bg_color,
             activeforeground=json_file.text_color)
-        self.gavrix.add_command(label="New File", command=self.new_file)
+        self.gavrix.add_command(label=_("New File"), command=self.new_file)
         self.gavrix.add_separator()
-        self.gavrix.add_command(label="Open File", command=self.file_open)
-        self.gavrix.add_command(label="Save", command=self.save)
-        self.gavrix.add_command(label="Save as", command=self.save_as)
-        self.gavrix.add_command(label="Close File", command=self.file_close)
+        self.gavrix.add_command(label=_("Open File"), command=self.file_open)
+        self.gavrix.add_command(label=_("Save"), command=self.save)
+        self.gavrix.add_command(label=_("Save as"), command=self.save_as)
+        self.gavrix.add_command(label=_("Close File"), command=self.file_close)
         self.gavrix.add_separator()
-        self.gavrix.add_command(label="Open Folder", command=self.folder_open)
+        self.gavrix.add_command(label=_("Open Folder"), command=self.folder_open)
         # self.gavrix.add_separator()
-        self.gavrix.add_command(label="Refresh", command=self.explorer.start)
-        self.gavrix.add_command(label="Close Folder", command=self.folder_close)
+        self.gavrix.add_command(label=_("Refresh"), command=self.explorer.start)
+        self.gavrix.add_command(label=_("Close Folder"), command=self.folder_close)
 
         self.editmenu = tk.Menu(
             self.mainmenu,
@@ -475,14 +480,14 @@ class Application(ttk.Frame):
             fg=json_file.text_color,
             activebackground=json_file.bg_color,
             activeforeground=json_file.text_color)
-        self.editmenu.add_command(label="Undo", command=self.undo)
-        self.editmenu.add_command(label="Redo", command=self.redo)
+        self.editmenu.add_command(label=_("Undo"), command=self.undo)
+        self.editmenu.add_command(label=_("Redo"), command=self.redo)
         self.editmenu.add_separator()
-        self.editmenu.add_command(label="Cut", command=self.cut)
-        self.editmenu.add_command(label="Copy", command=self.copy)
-        self.editmenu.add_command(label="Paste", command=self.paste)
-        self.editmenu.add_command(label="Delete", command=self.delete)
-        self.editmenu.add_command(label="Select All", command=self.select_all)
+        self.editmenu.add_command(label=_("Cut"), command=self.cut)
+        self.editmenu.add_command(label=_("Copy"), command=self.copy)
+        self.editmenu.add_command(label=_("Paste"), command=self.paste)
+        self.editmenu.add_command(label=_("Delete"), command=self.delete)
+        self.editmenu.add_command(label=_("Select All"), command=self.select_all)
 
         self.view = tk.Menu(
             self.mainmenu,
@@ -518,14 +523,14 @@ class Application(ttk.Frame):
                 label=theme, command=lambda n=theme: self.change_theme(n))
 
         self.view.add_cascade(
-            label="Scale: "+str(int(6.25*interface.font_size))+"%", menu=self.scale)
+            label=_("Scale: ")+str(int(6.25*interface.font_size))+"%", menu=self.scale)
 
-        self.view.add_cascade(label="Theme", menu=self.themes)
+        self.view.add_cascade(label=_("Theme"), menu=self.themes)
 
-        self.mainmenu.add_cascade(label="Gavrix", menu=self.gavrix)
-        self.mainmenu.add_cascade(label="Edit", menu=self.editmenu)
-        self.mainmenu.add_command(label="Find", command=self.find)
-        self.mainmenu.add_cascade(label="View", menu=self.view)
+        self.mainmenu.add_cascade(label=_("Gavrix"), menu=self.gavrix)
+        self.mainmenu.add_cascade(label=_("Edit"), menu=self.editmenu)
+        self.mainmenu.add_command(label=_("Find"), command=self.find)
+        self.mainmenu.add_cascade(label=_("View"), menu=self.view)
 
         self.right_click_menu = None
         self.event_click = None
@@ -535,7 +540,7 @@ class Application(ttk.Frame):
                 file.widget.bind('<Button-3>', self.right_click)
                 self.master.bind('<Button-1>', self.left_click)
 
-        self.mainmenu.add_command(label="About", command=self.about)
+        self.mainmenu.add_command(label=_("About"), command=self.about)
 
         self.positionWidgets()
 
@@ -552,14 +557,15 @@ class Application(ttk.Frame):
                 fg=json_file.text_color,
                 activebackground=json_file.bg_color,
                 activeforeground=json_file.text_color)
-            self.right_click_menu.add_command(label="Undo", command=self.undo)
+            self.right_click_menu.add_command(label=_("Undo"), command=self.undo)
+            self.right_click_menu.add_command(label=_("Redo"), command=self.redo)
             self.right_click_menu.add_separator()
-            self.right_click_menu.add_command(label="Cut", command=self.cut)
-            self.right_click_menu.add_command(label="Copy", command=self.copy)
-            self.right_click_menu.add_command(label="Paste", command=self.paste)
-            self.right_click_menu.add_command(label="Delete", command=self.delete)
+            self.right_click_menu.add_command(label=_("Cut"), command=self.cut)
+            self.right_click_menu.add_command(label=_("Copy"), command=self.copy)
+            self.right_click_menu.add_command(label=_("Paste"), command=self.paste)
+            self.right_click_menu.add_command(label=_("Delete"), command=self.delete)
             self.right_click_menu.add_separator()
-            self.right_click_menu.add_command(label="Select All", command=self.select_all)
+            self.right_click_menu.add_command(label=_("Select All"), command=self.select_all)
             self.right_click_menu.post(event.x_root, event.y_root)
         else:
             self.left_click()
@@ -662,7 +668,7 @@ class Application(ttk.Frame):
             bg=json_file.bg_color,
             highlightbackground=json_file.text_color)
         dialogue.geometry("350x350")
-        dialogue.title("About")
+        dialogue.title(_("About"))
 
         frame = tk.Frame(
             dialogue,
@@ -677,13 +683,13 @@ class Application(ttk.Frame):
         label1.place(x=350/2, y=350/2, anchor="center")
         label2 = ttk.Label(
             frame,
-            text="Developed by",
+            text=_("Developed by"),
             background=json_file.bg_color,
             foreground=json_file.text_color)
         label2.place(x=350/2, y=350/2, anchor="center")
         label3 = ttk.Label(
             frame,
-            text="Ilya Doroshenko [github: fickmann]",
+            text=_("Ilya Doroshenko [github: fickmann]"),
             background=json_file.bg_color,
             foreground=json_file.text_color)
         label3.place(x=350/2, y=350/2, anchor="center")
@@ -695,7 +701,7 @@ class Application(ttk.Frame):
         label4.place(x=350/2, y=350/2, anchor="center")
         label5 = ttk.Label(
             frame,
-            text="Roman Karpenkov [github: warnachinka]",
+            text=_("Roman Karpenkov [github: warnachinka]"),
             background=json_file.bg_color,
             foreground=json_file.text_color)
         label5.place(x=350/2, y=350/2, anchor="center")
@@ -721,7 +727,7 @@ class Application(ttk.Frame):
             bg=json_file.bg_color,
             highlightbackground=json_file.text_color)
         self.find_dialogue.geometry("375x150")
-        self.find_dialogue.title("Find")
+        self.find_dialogue.title(_("Find"))
         self.find_dialogue.resizable(1, 0)
 
         self.find_frame = tk.Frame(
@@ -744,13 +750,13 @@ class Application(ttk.Frame):
 
         self.text_find_label = ttk.Label(
             self.find_frame,
-            text="Find: ",
+            text=_("Find: "),
             width=8,
             background=json_file.bg_color,
             foreground=json_file.text_color)
         self.text_replace_label = ttk.Label(
             self.replace_frame,
-            text="Replace: ",
+            text=_("Replace: "),
             width=8,
             background=json_file.bg_color,
             foreground=json_file.text_color)
@@ -768,13 +774,13 @@ class Application(ttk.Frame):
 
         self.find_button = tk.Button(
             self.button_frame,
-            text="Find",
+            text=_("Find"),
             command=self.find_text,
             background=json_file.bg_color,
             foreground=json_file.text_color)
         self.replace_button = tk.Button(
             self.button_frame,
-            text="Replace",
+            text=_("Replace"),
             command=self.replace,
             background=json_file.bg_color,
             foreground=json_file.text_color)
@@ -792,28 +798,32 @@ class Application(ttk.Frame):
 
     def updateText(self):
         """Restore the text color upon closing the dialogue window."""
-        self.tabpad.txt_edit.tag_config(
-            "match",
-            background=json_file.bg_color,
-            foreground=json_file.text_color)
-        self.find_dialogue.destroy()
+        for key, file in self.tabpad.tabs_collection.items():
+            if file.widget is not None:
+                file.widget.tag_config(
+                    "match",
+                    background=json_file.bg_color,
+                    foreground=json_file.text_color)
+                self.find_dialogue.destroy()
 
     def find_text(self):
         """Find the specified text in the text field and mark it."""
         word = self.find_input.get()
-        self.tabpad.txt_edit.tag_remove("match", "1.0", tk.END)
-        matches = 0
-        if word:
-            start_pos = "1.0"
-            while True:
-                start_pos = self.tabpad.txt_edit.search(word, start_pos, stopindex=tk.END)
-                if not start_pos:
-                    break
-                end_pos = f"{start_pos}+ {len(word)}c"
-                self.tabpad.txt_edit.tag_add("match", start_pos, end_pos)
-                matches += 1
-                start_pos = end_pos
-                self.tabpad.txt_edit.tag_config("match", foreground="yellow", background="green")
+        for key, file in self.tabpad.tabs_collection.items():
+            if file.widget is not None:
+                file.widget.tag_remove("match", "1.0", tk.END)
+                matches = 0
+                if word:
+                    start_pos = "1.0"
+                    while True:
+                        start_pos = file.widget.search(word, start_pos, stopindex=tk.END)
+                        if not start_pos:
+                            break
+                        end_pos = f"{start_pos}+ {len(word)}c"
+                        file.widget.tag_add("match", start_pos, end_pos)
+                        matches += 1
+                        start_pos = end_pos
+                        file.widget.tag_config("match", foreground="yellow", background="green")
 
     def replace(self):
         """Replace all found entities with the same specified text."""
@@ -854,7 +864,7 @@ class Application(ttk.Frame):
         if interface.folder_path:
             path_to_file = self.explorer.file_open()
             if path_to_file:
-                tag = magic.from_file(path_to_file, mime=True)
+                tag = magic.from_file(path_to_file)
                 file = File(tag, path_to_file)
                 self.tabpad.add_new(file)
         else:
@@ -878,7 +888,7 @@ class Application(ttk.Frame):
 
         # self.tabpad.linenumbers.redraw()
         interface.font_size = s
-        self.view.entryconfigure(0, label="Scale: "+str(int(6.25*s))+"%")
+        self.view.entryconfigure(0, label=_("Scale: ")+str(int(6.25*s))+"%")
 
     def gavrix_exit(self):
         """Exit the program."""
@@ -933,7 +943,7 @@ class Application(ttk.Frame):
         )
         if not path_to_file:
             return
-        tag = magic.from_file(path_to_file, mime=True)
+        tag = magic.from_file(path_to_file)
         file = File(tag, path_to_file)
         self.tabpad.add_new(file)
         for key, file in self.tabpad.tabs_collection.items():
@@ -949,5 +959,5 @@ class Application(ttk.Frame):
             self.tabpad.forget(self.tabpad.select())
 
 
-app = Application(title="Gavrix")
+app = Application(title=_("Gavrix"))
 app.mainloop()
