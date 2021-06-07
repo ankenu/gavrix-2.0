@@ -180,9 +180,8 @@ class TextLineNumbers(tk.Canvas):
                 break
             linenum = str(i).split(".")[0]
 
-            x = 5*interface.font_size - interface.font_size*(len(linenum)-0.3*(len(linenum)-1))
+            x = 5*interface.font_size - interface.font_size*len(linenum)
             y = dline[1]
-
             self.create_text(
                 x,
                 y,
@@ -518,7 +517,9 @@ class Application(ttk.Frame):
             self.themes.add_command(
                 label=theme, command=lambda n=theme: self.change_theme(n))
 
-        self.view.add_cascade(label="Scale: 75%", menu=self.scale)
+        self.view.add_cascade(
+            label="Scale: "+str(int(6.25*interface.font_size))+"%", menu=self.scale)
+
         self.view.add_cascade(label="Theme", menu=self.themes)
 
         self.mainmenu.add_cascade(label="Gavrix", menu=self.gavrix)
