@@ -2,11 +2,7 @@
     "themes": {
         "Day": {
             "text_color": "Black",
-<<<<<<< HEAD
-            "line_num_color": "Dark Grey",
-=======
             "line_num_color": "#f5f7f6",
->>>>>>> dev
             "line_num_text_color": "#bbb5eb",
             "background_color": "White"
         },
