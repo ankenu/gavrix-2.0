@@ -1,17 +1,17 @@
 {
     "themes": {
-        "Light": {
+        "Day": {
             "text_color": "Black",
-            "line_num_color": "Light Grey",
-            "line_num_text_color": "Dark Grey",
+            "line_num_color": "Dark Grey",
+            "line_num_text_color": "#bbb5eb",
             "background_color": "White"
         },
-        "Dark": {
-            "text_color": "White",
-            "line_num_color": "Dark Grey",
-            "line_num_text_color": "White",
-            "background_color": "Black"
+        "Night": {
+            "text_color": "Light Grey",
+            "line_num_color": "Light Grey",
+            "line_num_text_color": "#bbb5eb",
+            "background_color": "Dark Grey"
         }
     },
-    "current": "Light"
+    "current": "Day"
 }
