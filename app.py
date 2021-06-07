@@ -568,9 +568,46 @@ class Application(ttk.Frame):
         self.mainmenu.add_command(label="Find", command=self.find)
         self.mainmenu.add_cascade(label="View", menu=self.view)
 
+        self.right_click_menu = None
+        self.event_click = None
+
+        for key, file in self.tabpad.tabs_collection.items():
+            if file.widget:
+                file.widget.bind('<Button-3>', self.right_click)
+                file.widget.bind('<Button-1>', self.left_click)
+
         self.positionWidgets()
 
         self.explorer.bind("<Double-1>", self.explorer_file_open)
+
+    def right_click(self, event):
+        """Open menu on right click when cursor is in text widget."""
+        if self.right_click_menu is None:
+            self.right_click_menu = tk.Menu(
+                self.mainmenu,
+                tearoff=0,
+                bg=json_file.bg_color,
+                fg=json_file.text_color,
+                activebackground=json_file.bg_color,
+                activeforeground=json_file.text_color)
+            self.right_click_menu.add_command(label="Undo", command=self.undo)
+            self.right_click_menu.add_separator()
+            self.right_click_menu.add_command(label="Cut", command=self.cut)
+            self.right_click_menu.add_command(label="Copy", command=self.copy)
+            self.right_click_menu.add_command(label="Paste", command=self.paste)
+            self.right_click_menu.add_command(label="Delete", command=self.delete)
+            self.right_click_menu.add_separator()
+            self.right_click_menu.add_command(label="Select All", command=self.select_all)
+            self.right_click_menu.post(event.x_root, event.y_root)
+        else:
+            self.left_click(event)
+            self.right_click(event)
+
+    def left_click(self, event=None):
+        """Hide right clik menu upon left click."""
+        if self.right_click_menu is not None:
+            self.right_click_menu.destroy()
+            self.right_click_menu = None
 
     def copy(self):
         """Clear the clipboard, copy selected contents."""
@@ -648,7 +685,6 @@ class Application(ttk.Frame):
         """Add tab with the new file."""
         self.file = File("t")
         self.tabpad.add_new(self.file)
-
 
     def folder_close(self):
         """Remove the folder from Explorer."""
