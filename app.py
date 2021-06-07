@@ -182,8 +182,9 @@ class Tabs(ttk.Notebook):
     
     def add_new(self, file):
         """Adds new tab with frame"""
-        if not file.path in self.path_list:
-            self.path_list.append(file.path)
+        if (not file.path in self.path_list) or file.path == "":
+            if file.path != "":
+                self.path_list.append(file.path)
             frame_style = ttk.Style()
             frame_style.configure("TFrame", bg = json_file.bg_color, fg = json_file.text_color,)
             tab_place = ttk.Frame(self, style="TFrame")
@@ -202,24 +203,24 @@ class Tabs(ttk.Notebook):
                     borderwidth=0, 
                     background=json_file.bg_color)  #self.fsize 14
                 
-                self.scrollview = CustomText(
-                    tab_place, 
-                    width=60, 
-                    font=("Helvetica", 2), 
-                    fg = json_file.text_color,
-                    borderwidth=0,
-                    highlightbackground=json_file.line_num_color,
-                    background=json_file.bg_color)
+                # self.scrollview = CustomText(
+                #     tab_place, 
+                #     width=60, 
+                #     font=("Helvetica", 2), 
+                #     fg = json_file.text_color,
+                #     borderwidth=0,
+                #     highlightbackground=json_file.line_num_color,
+                #     background=json_file.bg_color)
 
                 scrollbar_style = ttk.Style()
                 scrollbar_style.configure("Vertical.TScrollbar", background = json_file.bg_color)
                 
-                self.scrollbar = ttk.Scrollbar(tab_place, orient="vertical", style="Vertical.TScrollbar")
-                
+                self.scrollbar = ttk.Scrollbar(tab_place, orient="vertical", command=self.txt_edit.yview)
+                self.txt_edit['yscrollcommand'] = self.scrollbar.set
                 # txt_edit.configure(yscrollcommand=scrollbar.set)
                 
-                self.scrollbar['command'] = self.on_scrollbar
-                self.txt_edit['yscrollcommand'] = self.on_textscroll_txt_edit
+                # self.scrollbar['command'] = self.on_scrollbar
+                # self.txt_edit['yscrollcommand'] = self.on_textscroll_txt_edit
                 # self.scrollview['yscrollcommand'] = self.on_textscroll_scrollview
 
                 self.linenumbers = TextLineNumbers(tab_place, width=(interface.font_size * 5))
@@ -230,13 +231,13 @@ class Tabs(ttk.Notebook):
                 self.linenumbers.pack(fill="y", side="left")
                 self.scrollbar.pack(fill="y", side="right", padx=self.txt_edit.winfo_width())
                 self.txt_edit.pack(fill="both", expand=True, side="left")
-                self.scrollview.pack(fill="y", side="left")
+                # self.scrollview.pack(fill="y", side="left")
 
                 self.txt_edit.bind("<KeyPress>", self.file_edit)
                 self.txt_edit.bind("<<Change>>", self.linenumbers.linenumbers_change)
                 self.txt_edit.bind("<Configure>", self.linenumbers.linenumbers_change)
                 self.txt_edit.bind("<FocusIn>", self.linenumbers.resize)
-                self.txt_edit.bind("<<Modified>>", self.update)
+                # self.txt_edit.bind("<<Modified>>", self.update)
 
                 if file.path != "":
                     self.txt_edit.delete("1.0", tk.END)
@@ -244,11 +245,12 @@ class Tabs(ttk.Notebook):
                         if (text == ""):
                             text = input_file.read()
                         self.txt_edit.insert(tk.END, text)
-                    self.scrollview.delete("1.0", tk.END)
-                    
-                    self.scrollview.config(state='disabled')
+                    # self.scrollview.delete("1.0", tk.END)
+                    # self.scrollview.config(state='disabled')
                 if file.path == "" and text != "":
                     self.txt_edit.insert(tk.END, text)
+                    # self.scrollview.insert(tk.END, text)
+                    # self.scrollview.config(state='disabled')
 
             if file.tag[0] == "i":
                 file.widget = None
@@ -266,30 +268,30 @@ class Tabs(ttk.Notebook):
             self.add(tab_place, text=file_name)
             self.tabs_collection[tab_place] = file
 
-    def on_scrollbar(self, *args):
-        """Scrolls both text widgets when the scrollbar is moved"""
-        self.txt_edit.yview(*args)
-        self.scrollview.yview(*args)
+    # def on_scrollbar(self, *args):
+    #     """Scrolls both text widgets when the scrollbar is moved"""
+    #     self.txt_edit.yview(*args)
+    #     self.scrollview.yview(*args)
 
-    def on_textscroll_scrollview(self, *args):
-        """Moves the scrollbar and scrolls text widgets when the mousewheel
-        is moved on a text widget"""
-        # self.on_scrollbar('moveto', args[0])
+    # def on_textscroll_scrollview(self, *args):
+    #     """Moves the scrollbar and scrolls text widgets when the mousewheel
+    #     is moved on a text widget"""
+    #     # self.on_scrollbar('moveto', args[0])
     
-    def on_textscroll_txt_edit(self, *args):
-        """Moves the scrollbar and scrolls text widgets when the mousewheel
-        is moved on a text widget"""
-        self.scrollbar.set(*args)
-        self.on_scrollbar('moveto', args[0])
+    # def on_textscroll_txt_edit(self, *args):
+    #     """Moves the scrollbar and scrolls text widgets when the mousewheel
+    #     is moved on a text widget"""
+    #     self.scrollbar.set(*args)
+    #     self.on_scrollbar('moveto', args[0])
     
-    def update(self, event):
-        #print(self.scrollbar.get())
-        self.txt_edit.edit_modified(False)
-        input = self.txt_edit.get("1.0",'end-1c')
-        self.scrollview.config(state='normal')
-        self.scrollview.delete("1.0", tk.END)
-        self.scrollview.insert(tk.END, input)
-        self.scrollview.config(state='disabled')
+    # def update(self, event):
+    #     #print(self.scrollbar.get())
+    #     # self.txt_edit.edit_modified(False)
+    #     input = self.txt_edit.get("1.0",'end-1c')
+    #     self.scrollview.config(state='normal')
+    #     self.scrollview.delete("1.0", tk.END)
+    #     self.scrollview.insert(tk.END, input)
+    #     self.scrollview.config(state='disabled')
     
     def file_edit(self, event):
         key = self._nametowidget(self.select())
@@ -496,10 +498,12 @@ class Application(ttk.Frame):
         self.mainmenu.add_cascade(label="Edit", menu=self.editmenu)
         self.mainmenu.add_command(label="Find", command=self.find)
         self.mainmenu.add_cascade(label="View", menu=self.view)
+        self.mainmenu.add_command(label="About", command=self.about)
         
         self.positionWidgets()
         
         self.explorer.bind("<Double-1>", self.explorer_file_open)
+        self.master.protocol("WM_DELETE_WINDOW", self.gavrix_exit)
 
     def copy(self):
         # Clears the clipboard, copies selected contents.
@@ -558,15 +562,11 @@ class Application(ttk.Frame):
     def undo(self):
         key = self.tabpad._nametowidget(self.tabpad.select())
         file = self.tabpad.tabs_collection[key]
-        try:
-            file.widget.edit_undo()
-        except:
-            pass
+        file.widget.edit_undo()
 
     def redo(self):
         key = self.tabpad._nametowidget(self.tabpad.select())
         file = self.tabpad.tabs_collection[key]
-
         file.widget.edit_redo()
 
     def new_file(self):
@@ -577,6 +577,63 @@ class Application(ttk.Frame):
         interface.folder_path = ""
         self.explorer.start()
     
+    def about(self):
+        dialogue = tk.Toplevel(bg = json_file.bg_color, 
+            highlightbackground = json_file.text_color)
+        dialogue.geometry("350x350")
+        dialogue.title("About")
+
+        frame = tk.Frame(
+            dialogue, 
+            highlightbackground = json_file.bg_color, 
+            bg = json_file.bg_color)
+        frame.pack(fill="both", expand=True)
+        label1 = ttk.Label(
+            frame, 
+            text ="Gavrix 2.0", 
+            background = json_file.bg_color, 
+            foreground = json_file.text_color)
+        label1.place(x=350/2, y=350/2, anchor="center")
+        label2 = ttk.Label(
+            frame, 
+            text ="Developed by", 
+            background = json_file.bg_color, 
+            foreground = json_file.text_color)
+        label2.place(x=350/2, y=350/2, anchor="center")
+        label3 = ttk.Label(
+            frame, 
+            text ="Ilya Doroshenko [github: fickmann]", 
+            background = json_file.bg_color, 
+            foreground = json_file.text_color)
+        label3.place(x=350/2, y=350/2, anchor="center")
+        label4 = ttk.Label(
+            frame, 
+            text ="&", 
+            background = json_file.bg_color, 
+            foreground = json_file.text_color)
+        label4.place(x=350/2, y=350/2, anchor="center")
+        label5 = ttk.Label(
+            frame, 
+            text ="Roman Karpenkov [github: warnachinka]", 
+            background = json_file.bg_color, 
+            foreground = json_file.text_color)
+        label5.place(x=350/2, y=350/2, anchor="center")
+        label5.pack(side="bottom")
+        label4.pack(side="bottom")
+        label3.pack(side="bottom")
+        label2.pack(side="bottom")
+        label1.pack(side="bottom")
+
+        load = Image.open("img/gavrixlogoX350.png")
+        render = ImageTk.PhotoImage(load)
+        img_label = tk.Label(frame, image=render)
+        img_label.image = render
+        img_label.place(x=0, y=0)
+        img_label.pack(fill="both", expand=True, side="left")
+
+        dialogue.resizable(1,1)
+        dialogue.mainloop()
+
     def find(self, event = None):
         """Find dialogue window handler, includes the window itself and all of its widgets"""
         self.find_dialogue = tk.Toplevel(bg = json_file.bg_color, 
@@ -704,14 +761,7 @@ class Application(ttk.Frame):
         json_file.file_data["current"] = "Dark"
         json.dump(json_file.file_data, open(json_file.file_path, "w+"), indent=4)
         if messagebox.askokcancel("Restart required", "Do you want to restart now?"):
-            tabs_collection = self.tabpad.tabs_collection
-            for key, file in tabs_collection.items():
-                if (file.widget):
-                    file.widget = file.widget.get("1.0", 'end-1c')
-            interface.files_list = list(tabs_collection.values())
-            bin_file = open("settings.bin", "wb")
-            pickle.dump(interface, bin_file)
-            bin_file.close()
+            self.make_settings_bin()
             python = sys.executable
             os.execl(python, python, * sys.argv)
 
@@ -774,6 +824,19 @@ class Application(ttk.Frame):
     #         self.tabpad.txt_edit.pack(fill="both", expand=True, side="left")
     #         self.tabpad.scrollview.pack(fill="y", side="left")
 
+    def gavrix_exit(self):
+        self.make_settings_bin()
+        self.master.destroy()
+
+    def make_settings_bin(self):
+        tabs_collection = self.tabpad.tabs_collection
+        for key, file in tabs_collection.items():
+            if (file.widget):
+                file.widget = file.widget.get("1.0", 'end-1c')
+        interface.files_list = list(tabs_collection.values())
+        bin_file = open("settings.bin", "wb")
+        pickle.dump(interface, bin_file)
+        bin_file.close()
 
     def save(self):
         """Saves the opened file, if no file is opened - acts like save_as()"""
