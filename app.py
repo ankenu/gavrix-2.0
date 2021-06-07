@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import Scrollbar, ttk
+from tkinter import Scrollbar, Widget, ttk
 from tkinter import messagebox
 from tkinter.filedialog import askopenfilename, asksaveasfilename, askdirectory
 import tkinter.font as tkfont
@@ -60,15 +60,23 @@ class File:
         self.widget = None
         self.tag = TypeTag
         self.path = FilePath
+        # self.edit_status = False
         self.name = 'NewFile.txt' if not FilePath else os.path.basename(FilePath)
+
+    def change_values(self, FileWidget, TypeTag, FilePath, FileName):
+        # self.tab_widget = None
+        self.widget = FileWidget
+        self.tag = TypeTag
+        self.path = FilePath
+        self.name = FileName
 
 class Interface:
     def __init__(self):
         self.folder_path = ""
         self.tabulation = 4
         self.font_size = 12
-        self.tabs_collection = {} # { index, file }
-
+        self.files_list = []
+    
 interface = Interface()
 
 class CustomText(tk.Text):
@@ -113,6 +121,9 @@ class TextLineNumbers(tk.Canvas):
         self.textwidget = None
         self.is_on = True
 
+    def resize(self, event):
+        self.config(width=(interface.font_size * 5))
+
     def attach(self, text_widget):
         self.textwidget = text_widget
     
@@ -139,7 +150,7 @@ class TextLineNumbers(tk.Canvas):
                 y, 
                 anchor="nw", 
                 text=linenum, 
-                font=("TkDefaultFont", interface.font_size), fill = json_file.line_num_text_color)
+                font=("TkDefaultFont", interface.font_size-2), fill = json_file.line_num_text_color)
             i = self.textwidget.index("%s+1line" % i)
 
 class Tabs(ttk.Notebook):
@@ -168,6 +179,7 @@ class Tabs(ttk.Notebook):
             fill=json_file.bg_color)
 
         self.tabs_collection = {} # { index, file }
+        self.linenumbers_collection = {}
     
     def add_new(self, file):
         """Adds new tab with frame"""
@@ -176,9 +188,13 @@ class Tabs(ttk.Notebook):
         tab_place = ttk.Frame(self, style="TFrame")
         tab_place.pack(fill="both", expand=True, side="left")
         if file.tag[0] == "t":
+            if (file.widget):
+                text = file.widget
+            else:
+                text = ""
             file.widget = self.txt_edit = CustomText(
                 tab_place, 
-                font=("Droid Sans Fallback", 11),
+                font=("Droid Sans Fallback", interface.font_size),
                 fg = json_file.text_color, 
                 highlightthickness=0, 
                 borderwidth=0, 
@@ -204,7 +220,7 @@ class Tabs(ttk.Notebook):
             self.txt_edit['yscrollcommand'] = self.on_textscroll_txt_edit
             # self.scrollview['yscrollcommand'] = self.on_textscroll_scrollview
 
-            self.linenumbers = TextLineNumbers(tab_place, width=60)
+            self.linenumbers = TextLineNumbers(tab_place, width=(interface.font_size * 5))
             self.linenumbers.attach(self.txt_edit)
 
             # scrollview.attach(txt_edit)
@@ -216,20 +232,24 @@ class Tabs(ttk.Notebook):
 
             self.txt_edit.bind("<<Change>>", self.linenumbers.linenumbers_change)
             self.txt_edit.bind("<Configure>", self.linenumbers.linenumbers_change)
+            self.txt_edit.bind("<FocusIn>", self.linenumbers.resize)
             self.txt_edit.bind("<<Modified>>", self.update)
 
             if file.path != "":
                 self.txt_edit.delete("1.0", tk.END)
                 with open(file.path, "r") as input_file:
-                    text = input_file.read()
+                    if (text == ""):
+                        text = input_file.read()
                     self.txt_edit.insert(tk.END, text)
                 self.scrollview.delete("1.0", tk.END)
                 with open(file.path, "r") as input_file:
-                    text = input_file.read()
+                    if (text == ""):
+                        text = input_file.read()
                     self.scrollview.insert(tk.END, text)
                 self.scrollview.config(state='disabled')
 
         if file.tag[0] == "i":
+            file.widget = None
             load = Image.open(file.path)
             render = ImageTk.PhotoImage(load)
             img_label = tk.Label(tab_place, image=render)
@@ -239,7 +259,7 @@ class Tabs(ttk.Notebook):
 
         # file.tab_widget = tab_place #+-
         self.add(tab_place, text=file.name)
-        interface.tabs_collection[tab_place] = file
+        self.tabs_collection[tab_place] = file
 
     def on_scrollbar(self, *args):
         """Scrolls both text widgets when the scrollbar is moved"""
@@ -265,6 +285,9 @@ class Tabs(ttk.Notebook):
         self.scrollview.delete("1.0", tk.END)
         self.scrollview.insert(tk.END, input)
         self.scrollview.config(state='disabled')
+    
+    def get_tabs_collection(self):
+        return self.tabs_collection
 
 class Explorer(ttk.Treeview):
     def __init__(self, *args, **kwargs):
@@ -329,6 +352,8 @@ class Application(ttk.Frame):
     def __init__(self, master=None, title="<application>", **kwargs):
         super().__init__(master, **kwargs)
         self.master.title(title)
+        
+        self.master.call('wm', 'iconphoto', self.master._w, tk.PhotoImage(file='img/icon.png'))
 
         style = ttk.Style(self.master)
         self.master.tk.call('source', 'styles/gavrix/gavrix.tcl')
@@ -348,8 +373,6 @@ class Application(ttk.Frame):
     
     def createWidgets(self):
         self.path_to_file = 0
-        self.path_to_folder = ""
-        self.is_folder_explorer_on = False
 
         self.first_screen = tk.PanedWindow(self, orient="horizontal", bg=json_file.bg_color)
         self.second_screen = tk.PanedWindow(self.first_screen, orient="horizontal", bg=json_file.bg_color)
@@ -364,8 +387,21 @@ class Application(ttk.Frame):
 
         self.tabpad = Tabs(self.second_place)
 
-        self.file = File("t")
-        self.tabpad.add_new(self.file)
+        if (os.path.exists("settings.bin")):
+            with open("settings.bin", "rb") as bin_file:
+                intrfc = pickle.load(bin_file)
+                interface.folder_path = intrfc.folder_path
+                interface.font_size = intrfc.font_size
+                interface.tabulation = intrfc.tabulation
+      
+            if intrfc.files_list:
+                for file in intrfc.files_list:
+                    self.file = File("t")
+                    self.file.change_values(file.widget, file.tag, file.path, file.name)
+                    self.tabpad.add_new(self.file)
+        else:
+            self.file = File("t")
+            self.tabpad.add_new(self.file)
 
         self.explorer = Explorer(self.first_place, show="tree")
         self.scrollbar_explorer = ttk.Scrollbar(self.first_place, orient="vertical", command=self.explorer.yview)
@@ -542,11 +578,13 @@ class Application(ttk.Frame):
         json_file.file_data["current"] = "Light"
         json.dump(json_file.file_data, open(json_file.file_path, "w+"), indent=4)
         if messagebox.askokcancel("Restart required", "Do you want to restart now?"):
-            for key, file in interface.tabs_collection.items():
-                file.widget = file.widget.get("1.0", tk.END)
-            list_of_files = list(interface.tabs_collection.values())
+            tabs_collection = self.tabpad.get_tabs_collection()
+            for key, file in tabs_collection.items():
+                if (file.widget):
+                    file.widget = file.widget.get("1.0", 'end-1c')
+            interface.files_list = list(tabs_collection.values())
             bin_file = open("settings.bin", "wb")
-            pickle.dump(list_of_files, bin_file)
+            pickle.dump(interface, bin_file)
             bin_file.close()
             python = sys.executable
             os.execl(python, python, * sys.argv)
@@ -556,11 +594,13 @@ class Application(ttk.Frame):
         json_file.file_data["current"] = "Dark"
         json.dump(json_file.file_data, open(json_file.file_path, "w+"), indent=4)
         if messagebox.askokcancel("Restart required", "Do you want to restart now?"):
-            for key, file in interface.tabs_collection.items():
-                file.widget = file.widget.get("1.0", tk.END)
-            list_of_files = list(interface.tabs_collection.values())
+            tabs_collection = self.tabpad.get_tabs_collection()
+            for key, file in tabs_collection.items():
+                if (file.widget):
+                    file.widget = file.widget.get("1.0", 'end-1c')
+            interface.files_list = list(tabs_collection.values())
             bin_file = open("settings.bin", "wb")
-            pickle.dump(list_of_files, bin_file)
+            pickle.dump(interface, bin_file)
             bin_file.close()
             python = sys.executable
             os.execl(python, python, * sys.argv)
@@ -587,8 +627,12 @@ class Application(ttk.Frame):
     def change_scale(self,s):
         """Changes the font size of the whole document, supports 5 different sizes"""
         # file = interface.tabs_collection[self.tabpad._nametowidget(self.tabpad.select())]
-        for key, file in interface.tabs_collection.items():
-            file.widget.config(font=('Helvetica', s))
+        for key, file in self.tabpad.tabs_collection.items():
+            if file.widget:
+                file.widget.config(font=('Helvetica', s))
+                file.widget.focus_set()
+            
+        # self.tabpad.linenumbers.redraw()
         interface.font_size = s
         self.view.entryconfigure(1, label = "Scale: "+str(int(6.25*s))+"%")
 
@@ -652,13 +696,13 @@ class Application(ttk.Frame):
             tag = magic.from_file(path_to_file, mime=True)
             file = File(tag, path_to_file)
             self.tabpad.add_new(file)
-            self.master.title(f"Gavrix - {path_to_file}")
 
     def file_close(self):
         """Closes the file that user has opened"""
+        tab_place = self.tabpad._nametowidget(self.tabpad.select())
+        del self.tabpad.tabs_collection[tab_place]
         self.tabpad.forget(self.tabpad.select())
-        self.master.title(f"Gavrix - NewFile.txt")
         self.path_to_file = 0
 
-app = Application(title="Gavrix - NewFile.txt")
+app = Application(title="Gavrix")
 app.mainloop()
