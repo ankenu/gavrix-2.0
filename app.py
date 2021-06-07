@@ -13,7 +13,10 @@ import magic
 import os
 import json
 import sys
+import gettext
 from gettext import gettext as _
+
+gettext.install("app", localedir="po")
 
 
 class JsonTheme():

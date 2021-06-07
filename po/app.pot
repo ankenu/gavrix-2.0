@@ -1,0 +1,131 @@
+# Translations template for PROJECT.
+# Copyright (C) 2021 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2021-06-08 00:34+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.9.1\n"
+
+#: app.py:464
+msgid "New File"
+msgstr ""
+
+#: app.py:466
+msgid "Open File"
+msgstr ""
+
+#: app.py:467
+msgid "Save"
+msgstr ""
+
+#: app.py:468
+msgid "Save as"
+msgstr ""
+
+#: app.py:469
+msgid "Close File"
+msgstr ""
+
+#: app.py:471
+msgid "Open Folder"
+msgstr ""
+
+#: app.py:473
+msgid "Refresh"
+msgstr ""
+
+#: app.py:474
+msgid "Close Folder"
+msgstr ""
+
+#: app.py:483 app.py:560
+msgid "Undo"
+msgstr ""
+
+#: app.py:484 app.py:561
+msgid "Redo"
+msgstr ""
+
+#: app.py:486 app.py:563
+msgid "Cut"
+msgstr ""
+
+#: app.py:487 app.py:564
+msgid "Copy"
+msgstr ""
+
+#: app.py:488 app.py:565
+msgid "Paste"
+msgstr ""
+
+#: app.py:489 app.py:566
+msgid "Delete"
+msgstr ""
+
+#: app.py:490 app.py:568
+msgid "Select All"
+msgstr ""
+
+#: app.py:526 app.py:891
+msgid "Scale: "
+msgstr ""
+
+#: app.py:528
+msgid "Theme"
+msgstr ""
+
+#: app.py:530 app.py:962
+msgid "Gavrix"
+msgstr ""
+
+#: app.py:531
+msgid "Edit"
+msgstr ""
+
+#: app.py:532 app.py:730 app.py:777
+msgid "Find"
+msgstr ""
+
+#: app.py:533
+msgid "View"
+msgstr ""
+
+#: app.py:543 app.py:671
+msgid "About"
+msgstr ""
+
+#: app.py:686
+msgid "Developed by"
+msgstr ""
+
+#: app.py:692
+msgid "Ilya Doroshenko [github: fickmann]"
+msgstr ""
+
+#: app.py:704
+msgid "Roman Karpenkov [github: warnachinka]"
+msgstr ""
+
+#: app.py:753
+msgid "Find: "
+msgstr ""
+
+#: app.py:759
+msgid "Replace: "
+msgstr ""
+
+#: app.py:783
+msgid "Replace"
+msgstr ""
+
