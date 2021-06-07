@@ -14,9 +14,8 @@ import os
 import json
 import sys
 import gettext
-from gettext import gettext as _
 
-gettext.install("app", localedir="po")
+gettext.install("app", localedir="translate")
 
 
 class JsonTheme():
@@ -28,17 +27,15 @@ class JsonTheme():
         self.data = {}
         self.data["themes"] = {}
         self.data["themes"]["Light"] = {
-                    "text_color": "Black",
-                    "line_num_color": "Dark Grey",
-                    "line_num_text_color": "#bbb5eb",
-                    "background_color": "White"
-                }
+            "text_color": "Black",
+            "line_num_color": "Dark Grey",
+            "line_num_text_color": "#bbb5eb",
+            "background_color": "White"}
         self.data["themes"]["Dark"] = {
-                    "text_color": "Light Grey",
-                    "line_num_color": "Light Grey",
-                    "line_num_text_color": "#bbb5eb",
-                    "background_color": "Dark Grey"
-                    }
+            "text_color": "Light Grey",
+            "line_num_color": "Light Grey",
+            "line_num_text_color": "#bbb5eb",
+            "background_color": "Dark Grey"}
         self.data["current"] = "Light"
 
     def check(self):
@@ -137,10 +134,10 @@ class CustomText(tk.Text):
             return
 
         if (args[0] in ("insert", "replace", "delete") or
-            args[0:3] == ("mark", "set", "insert") or
-            args[0:2] == ("xview", "moveto") or
-            args[0:2] == ("xview", "scroll") or
-            args[0:2] == ("yview", "moveto") or
+                args[0:3] == ("mark", "set", "insert") or
+                args[0:2] == ("xview", "moveto") or
+                args[0:2] == ("xview", "scroll") or
+                args[0:2] == ("yview", "moveto") or
                 args[0:2] == ("yview", "scroll")):
             self.event_generate("<<Change>>", when="tail")
 
@@ -184,14 +181,14 @@ class TextLineNumbers(tk.Canvas):
                 break
             linenum = str(i).split(".")[0]
 
-            x = 5*interface.font_size - interface.font_size*len(linenum)
+            x = 5 * interface.font_size - interface.font_size * len(linenum)
             y = dline[1]
             self.create_text(
                 x,
                 y,
                 anchor="nw",
                 text=linenum,
-                font=("TkDefaultFont", interface.font_size-2), fill=json_file.line_num_text_color)
+                font=("TkDefaultFont", interface.font_size - 2), fill=json_file.line_num_text_color)
             i = self.textwidget.index("%s+1line" % i)
 
 
@@ -391,7 +388,8 @@ class Application(ttk.Frame):
         self._geom = '1280x720+0+0'
         self.pad = 3
         self.master.geometry("{0}x{1}+0+0".format(
-            self.master.winfo_screenwidth()-self.pad, self.master.winfo_screenheight()-self.pad))
+            self.master.winfo_screenwidth() - self.pad,
+            self.master.winfo_screenheight() - self.pad))
 
         self.mainmenu = tk.Menu(
             self.master,
@@ -526,7 +524,7 @@ class Application(ttk.Frame):
                 label=theme, command=lambda n=theme: self.change_theme(n))
 
         self.view.add_cascade(
-            label=_("Scale: ")+str(int(6.25*interface.font_size))+"%", menu=self.scale)
+            label=_("Scale: ") + str(int(6.25 * interface.font_size)) + "%", menu=self.scale)
 
         self.view.add_cascade(label=_("Theme"), menu=self.themes)
 
@@ -683,31 +681,31 @@ class Application(ttk.Frame):
             text="Gavrix 2.0",
             background=json_file.bg_color,
             foreground=json_file.text_color)
-        label1.place(x=350/2, y=350/2, anchor="center")
+        label1.place(x=350 / 2, y=350 / 2, anchor="center")
         label2 = ttk.Label(
             frame,
             text=_("Developed by"),
             background=json_file.bg_color,
             foreground=json_file.text_color)
-        label2.place(x=350/2, y=350/2, anchor="center")
+        label2.place(x=350 / 2, y=350 / 2, anchor="center")
         label3 = ttk.Label(
             frame,
             text=_("Ilya Doroshenko [github: fickmann]"),
             background=json_file.bg_color,
             foreground=json_file.text_color)
-        label3.place(x=350/2, y=350/2, anchor="center")
+        label3.place(x=350 / 2, y=350 / 2, anchor="center")
         label4 = ttk.Label(
             frame,
             text="&",
             background=json_file.bg_color,
             foreground=json_file.text_color)
-        label4.place(x=350/2, y=350/2, anchor="center")
+        label4.place(x=350 / 2, y=350 / 2, anchor="center")
         label5 = ttk.Label(
             frame,
             text=_("Roman Karpenkov [github: warnachinka]"),
             background=json_file.bg_color,
             foreground=json_file.text_color)
-        label5.place(x=350/2, y=350/2, anchor="center")
+        label5.place(x=350 / 2, y=350 / 2, anchor="center")
         label5.pack(side="bottom")
         label4.pack(side="bottom")
         label3.pack(side="bottom")
@@ -754,13 +752,13 @@ class Application(ttk.Frame):
         self.text_find_label = ttk.Label(
             self.find_frame,
             text=_("Find: "),
-            width=8,
+            width=12,
             background=json_file.bg_color,
             foreground=json_file.text_color)
         self.text_replace_label = ttk.Label(
             self.replace_frame,
             text=_("Replace: "),
-            width=8,
+            width=12,
             background=json_file.bg_color,
             foreground=json_file.text_color)
 
@@ -844,7 +842,7 @@ class Application(ttk.Frame):
             return
         json_file.file_data["current"] = theme
         json.dump(json_file.file_data, open(json_file.file_path, "w+"), indent=4)
-        if messagebox.askokcancel("Restart required", "Do you want to restart now?"):
+        if messagebox.askokcancel(_("Restart required"), _("Do you want to restart now?")):
             self.make_settings_bin()
             python = sys.executable
             os.execl(python, python, * sys.argv)
@@ -891,7 +889,7 @@ class Application(ttk.Frame):
 
         # self.tabpad.linenumbers.redraw()
         interface.font_size = s
-        self.view.entryconfigure(0, label=_("Scale: ")+str(int(6.25*s))+"%")
+        self.view.entryconfigure(0, label=_("Scale: ") + str(int(6.25 * s)) + "%")
 
     def gavrix_exit(self):
         """Exit the program."""
@@ -926,8 +924,8 @@ class Application(ttk.Frame):
     def save_as(self):
         """Save the current file as new."""
         path_to_an_file = asksaveasfilename(
-                defaultextension=".txt",
-                filetypes=[("Text files", "*.txt"), ("All files", "*.*")])
+            defaultextension=".txt",
+            filetypes=[("Text files", "*.txt"), ("All files", "*.*")])
         if not path_to_an_file:
             return
         key = self.tabpad._nametowidget(self.tabpad.select())
@@ -941,9 +939,7 @@ class Application(ttk.Frame):
 
     def file_open(self):
         """Open the file that user wants to edit."""
-        path_to_file = askopenfilename(
-                filetypes=[("All files", "*.*"), ("Text files", "*.txt")]
-        )
+        path_to_file = askopenfilename(filetypes=[("All files", "*.*"), ("Text files", "*.txt")])
         if not path_to_file:
             return
         tag = magic.from_file(path_to_file)
