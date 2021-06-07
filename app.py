@@ -141,7 +141,7 @@ class TextLineNumbers(tk.Canvas):
             if dline is None: break
             linenum = str(i).split(".")[0]
 
-            x = 4*interface.font_size-interface.font_size*len(linenum)
+            x = 5*interface.font_size - interface.font_size*(len(linenum)-0.3*(len(linenum)-1))
             y = dline[1]
 
             self.create_text(
@@ -170,13 +170,14 @@ class Tabs(ttk.Notebook):
             "TNotebook.Tab",
             background = json_file.bg_color, 
             foreground = json_file.text_color,
+            padding=4,
             darkcolor = json_file.bg_color,
             lightcolor = json_file.text_color, 
             fieldbackground = json_file.bg_color,
             highlightbackground = json_file.bg_color,
             bordercolor = json_file.bg_color,
             fill=json_file.bg_color)
-
+        tab_style.map("TNotebook.Tab", background=[("selected", json_file.line_num_color)])
         self.tabs_collection = {} # { index, file }
         self.path_list = []
     
@@ -309,7 +310,9 @@ class Explorer(ttk.Treeview):
             background = json_file.bg_color, 
             foreground = json_file.text_color, 
             fieldbackground = json_file.bg_color,
-            highlightbackground = json_file.bg_color,
+            highlightthickness=0,
+            padding=0,
+            highlightbackground=json_file.bg_color,
             bordercolor = json_file.bg_color,
             fill=json_file.bg_color)
         self.folder_path = ""
@@ -392,7 +395,7 @@ class Application(ttk.Frame):
 
         self.first_screen = tk.PanedWindow(self, orient="horizontal", bg=json_file.bg_color)
         self.second_screen = tk.PanedWindow(self.first_screen, orient="horizontal", bg=json_file.bg_color)
-        self.first_place = tk.Frame(self.first_screen, bg=json_file.bg_color)
+        self.first_place = tk.Frame(self.first_screen, bg=json_file.bg_color, bd=0, highlightthickness=0)
         frame_style = ttk.Style()
         frame_style.configure("TFrame", 
             bg = json_file.bg_color, 

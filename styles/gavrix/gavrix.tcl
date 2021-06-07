@@ -242,11 +242,7 @@ namespace eval ttk::theme::gavrix {
 
        ttk::style element create Notebook.client \
             image $I(notebook-client) -border 1
-        ttk::style element create Notebook.tab \
-            image [list $I(notebook-tab-top) \
-                        selected    $I(notebook-tab-top-active) \
-                        active      $I(notebook-tab-top-hover) \
-            ] -padding {12 4 12 4} -border 2
+
 
             
         # TODO Enhance
@@ -261,8 +257,6 @@ namespace eval ttk::theme::gavrix {
             image $I(scrollbar-slider-vert) -border {0 6 0 6} -sticky ns
 
         # TODO: Ab hier noch teilweise Arc style
-        ttk::style element create Treeview.field \
-            image $I(treeview) -border 1
         ttk::style element create Treeheading.cell \
             image [list $I(notebook-client) \
                 active $I(treeheading-prelight)] \

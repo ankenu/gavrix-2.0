@@ -2,8 +2,8 @@
     "themes": {
         "Light": {
             "text_color": "Black",
-            "line_num_color": "Light Grey",
-            "line_num_text_color": "Dark Grey",
+            "line_num_color": "#f5f7f6",
+            "line_num_text_color": "#bbb5eb",
             "background_color": "White"
         },
         "Dark": {
