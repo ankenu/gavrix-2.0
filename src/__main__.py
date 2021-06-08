@@ -23,7 +23,7 @@ class JsonTheme():
 
     def __init__(self):
         """Specify standart file path and standart theme colors."""
-        self.file_path = "themes/theme.json"
+        self.file_path = "src/themes/theme.json"
         self.data = {}
         self.data["themes"] = {}
         self.data["themes"]["Light"] = {
@@ -379,10 +379,10 @@ class Application(ttk.Frame):
         super().__init__(master, **kwargs)
         self.master.title(title)
 
-        self.master.call('wm', 'iconphoto', self.master._w, tk.PhotoImage(file='img/icon.png'))
+        self.master.call('wm', 'iconphoto', self.master._w, tk.PhotoImage(file='src/img/icon.png'))
 
         style = ttk.Style(self.master)
-        self.master.tk.call('source', 'styles/gavrix/gavrix.tcl')
+        self.master.tk.call('source', 'src/styles/gavrix/gavrix.tcl')
         style.theme_use('gavrix')
 
         self._geom = '1280x720+0+0'
@@ -712,7 +712,7 @@ class Application(ttk.Frame):
         label2.pack(side="bottom")
         label1.pack(side="bottom")
 
-        load = Image.open("img/gavrixlogoX350.png")
+        load = Image.open("src/img/gavrixlogoX350.png")
         render = ImageTk.PhotoImage(load)
         img_label = tk.Label(frame, image=render)
         img_label.image = render

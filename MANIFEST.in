@@ -1,0 +1,7 @@
+recursive-include translate *.po
+recursive-include src/ru *
+recursive-include src/themes *
+recursive-include src/styles *
+recursive-include src/img *
+include *.md
+include .flake8
