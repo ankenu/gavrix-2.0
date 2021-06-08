@@ -31,3 +31,10 @@
 # Команда разработчиков
 1. Дорошенко Илья Викторович - [fickmann](https://github.com/fickmann)
 2. Карпенков Роман Андреевич - [warnachinka](https://github.com/warnachinka)
+
+# Руководство по установке
+
+1. Для генерации документации - doit docs
+2. Для генерации локализации - doit mo
+3. Для проверки на flake8/pydocstyle - flake8 src, pydocstyle src
+4. Для установки в пакет - все вышеперечисленное плюс doit, python3 -m build
