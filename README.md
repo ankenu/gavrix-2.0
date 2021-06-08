@@ -1,40 +1,54 @@
-# Gavrix 2.0
-Полноценный текстовый редактор на python с настраиваемым интерфейсом
-# Возможности
-1. Создание и редактирование текстовых файлов
-2. Настройка интерфейса (изменение масштаба, настройка цветовой темы)
-3. Реализация поиска внутри файла
-4. Возмоность открывать изображения
-5. Реализация открытия папок 
-6. Возможность переключаться между открытими файлами посредством вкладок
-# Внешний вид интерфейса
-![редактор](https://raw.githubusercontent.com/fickmann/gavrix-2.0/main/doc_src/_static/example.png)
-Приложение имеет 3 разных окна - основное, окно поиска и окно со сведениями о команде разработчиков
+<p align="center">
+    <img src="https://github.com/fickmann/gavrix-2.0/blob/main/img/logo.png" width="300"/>
+</p>
 
-Основное окно имеет 3 основных виджета - главное меню сверху, проводник слева и текстовое поле справа.
+<p align="center">A full-fledged python text editor with a custom interface, based on tkinter.</p>
 
-# Главное меню
-Имеет следующие подпункты:
-1. Гаврикс(взаимодействие с файлами и папками); 
-2. Редактирование(взаимодействие с текстовым полем); 
-3. Поиск(нахождение необходимого текста в файле и последующая его замена, если потребуется);
-4. Вид (настройка внешенего вида программы - выбор темы и масштаба текста)
-5. О программе (вывод окна с именами разработчиков)
+## Features
+1. Create and edit text files.
+2. Customizing the interface (changing the scale, setting the color theme).
+3. Implementing search inside the file.
+4. The ability to open images.
+5. Implementation of opening folders (file explorer).
+6. The ability to switch between open files via tabs.
+## Interface Appearance
+The Gavrix has 3 different windows - the main window, the search window, and the window with information about the development team. The main window has 3 widgets - the main menu on the top, the explorer on the left, and the text field on the right.
 
-# Всплывающее меню
+![Screenshot of the Gavrix](https://raw.githubusercontent.com/fickmann/gavrix-2.0/main/doc_src/_static/example.png)
 
-Также, при нажатии правой кнопкой мыши на текстовое поле, появляется всплывающее меню, чьи пункты копируют "Редактирование" из главного меню. 
+## Main Menu
+The Gavrix has the following sub-items:
+1. Gavrix – a menu for interacting with files and folders.
+2. Edit – menu for interactions with the text field.
+3. Search – the function of finding the necessary text in the file and then replacing it, if necessary.
+4. View – the menu of settings of the external view of the program (selection of the theme and the scale of the text).
+5. O – function for displaying a pop-up window with the names of the developers.
 
-# Темы
-Приложение поддерживает настраиваемые пользователем цветовые схемы, которые хранятся в специальном .json файле. В нём можно настроить названия тем, а так же четыре цветовых поля - цвет фона, цвет текста, цвет фона номеров строк и цвет номеров строк.
+## Pop-up Menu
+When you right-click on the text field, a pop-up menu appears, whose items copy "Edit" from the main menu.
 
-# Команда разработчиков
-1. Дорошенко Илья Викторович - [fickmann](https://github.com/fickmann)
-2. Карпенков Роман Андреевич - [warnachinka](https://github.com/warnachinka)
+## Themes
+The Gavrix supports user-configurable color schemes, which are stored in a special JSON file. You can customize the topic names, as well as four color fields - background color, text color, line number background color, and line number color.
 
-# Руководство по установке
+## Installation Guide
+Generating documentation:
+```sh
+doit docs
+```
+Localization generation: 
+```sh
+doit mo
+```
+Checking for flake8/pydocstyle: 
+```sh
+flake8 src, pydocstyle src
+```
+Package installations:
+```sh
+doit
+python3 -m build
+```
 
-1. Для генерации документации - doit docs
-2. Для генерации локализации - doit mo
-3. Для проверки на flake8/pydocstyle - flake8 src, pydocstyle src
-4. Для установки в пакет - все вышеперечисленное плюс doit, python3 -m build
+## Development Team
+1. [fickmann](https://github.com/fickmann)
+2. [warnachinka](https://github.com/warnachinka)
