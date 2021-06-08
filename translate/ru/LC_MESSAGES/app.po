@@ -41,7 +41,7 @@ msgstr "Закрыть файл"
 
 #: app.py:472
 msgid "Open Folder"
-msgstr "Закрыть папку"
+msgstr "Открыть папку"
 
 #: app.py:474
 msgid "Refresh"

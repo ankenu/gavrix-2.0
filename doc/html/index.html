@@ -1,0 +1,418 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Welcome to Gavrix 2.0’s documentation! &#8212; Gavrix 2.0  documentation</title>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Introduction" href="intro.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="welcome-to-gavrix-2-0-s-documentation">
+<h1>Welcome to Gavrix 2.0’s documentation!<a class="headerlink" href="#welcome-to-gavrix-2-0-s-documentation" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="menus.html">1. Main Menu</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="menus.html#gavrix-menu">1.1 Gavrix Menu</a></li>
+<li class="toctree-l2"><a class="reference internal" href="menus.html#edit-menu">1.2 Edit Menu</a></li>
+<li class="toctree-l2"><a class="reference internal" href="menus.html#find-button">1.2 Find Button</a></li>
+<li class="toctree-l2"><a class="reference internal" href="menus.html#view-menu">1.3 View Menu</a></li>
+<li class="toctree-l2"><a class="reference internal" href="menus.html#about-button">1.4 About button</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<span class="target" id="module-application"></span><p>Simple text editor, which supports different color themes.</p>
+<dl class="py class">
+<dt id="application.Application">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">application.</span></code><code class="sig-name descname"><span class="pre">Application</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">master</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'&lt;application&gt;'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#application.Application" title="Permalink to this definition">¶</a></dt>
+<dd><p>Application class, that contains all functions and handles all widgets.</p>
+<dl class="py method">
+<dt id="application.Application.about">
+<code class="sig-name descname"><span class="pre">about</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#application.Application.about" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display pop-up window with info about development team.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="application.Application.change_scale">
+<code class="sig-name descname"><span class="pre">change_scale</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#application.Application.change_scale" title="Permalink to this definition">¶</a></dt>
+<dd><p>Change the font size of the whole document; supports 5 different sizes.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="application.Application.change_theme">
+<code class="sig-name descname"><span class="pre">change_theme</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">theme</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#application.Application.change_theme" title="Permalink to this definition">¶</a></dt>
+<dd><p>Change the current theme in the json file and restart the program to apply changes.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="application.Application.copy">
+<code class="sig-name descname"><span class="pre">copy</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#application.Application.copy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clear the clipboard, copy selected contents.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="application.Application.createWidgets">
+<code class="sig-name descname"><span class="pre">createWidgets</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#application.Application.createWidgets" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create all widgets and place them.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="application.Application.cut">
+<code class="sig-name descname"><span class="pre">cut</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#application.Application.cut" title="Permalink to this definition">¶</a></dt>
+<dd><p>Copy selection to the clipboard, then delete selection.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="application.Application.delete">
+<code class="sig-name descname"><span class="pre">delete</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#application.Application.delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete the selected text.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="application.Application.explorer_file_open">
+<code class="sig-name descname"><span class="pre">explorer_file_open</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#application.Application.explorer_file_open" title="Permalink to this definition">¶</a></dt>
+<dd><p>Open fie in the explorer.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="application.Application.file_close">
+<code class="sig-name descname"><span class="pre">file_close</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#application.Application.file_close" title="Permalink to this definition">¶</a></dt>
+<dd><p>Close the file that user has opened.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="application.Application.file_open">
+<code class="sig-name descname"><span class="pre">file_open</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#application.Application.file_open" title="Permalink to this definition">¶</a></dt>
+<dd><p>Open the file that user wants to edit.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="application.Application.find">
+<code class="sig-name descname"><span class="pre">find</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#application.Application.find" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find dialogue window handler, includes the window itself and all of its widgets.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="application.Application.find_text">
+<code class="sig-name descname"><span class="pre">find_text</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#application.Application.find_text" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find the specified text in the text field and mark it.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="application.Application.folder_close">
+<code class="sig-name descname"><span class="pre">folder_close</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#application.Application.folder_close" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove the folder from Explorer.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="application.Application.folder_open">
+<code class="sig-name descname"><span class="pre">folder_open</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#application.Application.folder_open" title="Permalink to this definition">¶</a></dt>
+<dd><p>Open folder in the explorer.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="application.Application.gavrix_exit">
+<code class="sig-name descname"><span class="pre">gavrix_exit</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#application.Application.gavrix_exit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exit the program.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="application.Application.left_click">
+<code class="sig-name descname"><span class="pre">left_click</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#application.Application.left_click" title="Permalink to this definition">¶</a></dt>
+<dd><p>Hide right clik menu upon left click.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="application.Application.make_settings_bin">
+<code class="sig-name descname"><span class="pre">make_settings_bin</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#application.Application.make_settings_bin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save all current settings in the bin file.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="application.Application.new_file">
+<code class="sig-name descname"><span class="pre">new_file</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#application.Application.new_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add tab with the new file.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="application.Application.paste">
+<code class="sig-name descname"><span class="pre">paste</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#application.Application.paste" title="Permalink to this definition">¶</a></dt>
+<dd><p>Paste selected contents from the clipboard.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="application.Application.positionWidgets">
+<code class="sig-name descname"><span class="pre">positionWidgets</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#application.Application.positionWidgets" title="Permalink to this definition">¶</a></dt>
+<dd><p>Place widgets where they belong.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="application.Application.redo">
+<code class="sig-name descname"><span class="pre">redo</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#application.Application.redo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Restore canceled action.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="application.Application.replace">
+<code class="sig-name descname"><span class="pre">replace</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#application.Application.replace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Replace all found entities with the same specified text.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="application.Application.right_click">
+<code class="sig-name descname"><span class="pre">right_click</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#application.Application.right_click" title="Permalink to this definition">¶</a></dt>
+<dd><p>Open menu on right click when cursor is in text widget.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="application.Application.save">
+<code class="sig-name descname"><span class="pre">save</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#application.Application.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save the opened file, if no file is opened - act like save_as().</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="application.Application.save_as">
+<code class="sig-name descname"><span class="pre">save_as</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#application.Application.save_as" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save the current file as new.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="application.Application.select_all">
+<code class="sig-name descname"><span class="pre">select_all</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#application.Application.select_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Select all contents.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="application.Application.undo">
+<code class="sig-name descname"><span class="pre">undo</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#application.Application.undo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cancel previous action.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="application.Application.updateText">
+<code class="sig-name descname"><span class="pre">updateText</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#application.Application.updateText" title="Permalink to this definition">¶</a></dt>
+<dd><p>Restore the text color upon closing the dialogue window.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="application.CustomText">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">application.</span></code><code class="sig-name descname"><span class="pre">CustomText</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#application.CustomText" title="Permalink to this definition">¶</a></dt>
+<dd><p>Text widget class, supports redo/undo functions.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="application.Explorer">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">application.</span></code><code class="sig-name descname"><span class="pre">Explorer</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#application.Explorer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for the file explorer frame based on ttk.Treeview.</p>
+<dl class="py method">
+<dt id="application.Explorer.file_open">
+<code class="sig-name descname"><span class="pre">file_open</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#application.Explorer.file_open" title="Permalink to this definition">¶</a></dt>
+<dd><p>Open the specified file.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="application.Explorer.runner">
+<code class="sig-name descname"><span class="pre">runner</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#application.Explorer.runner" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tag files and folders.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="application.Explorer.start">
+<code class="sig-name descname"><span class="pre">start</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#application.Explorer.start" title="Permalink to this definition">¶</a></dt>
+<dd><p>Start the explorer.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="application.File">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">application.</span></code><code class="sig-name descname"><span class="pre">File</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">TypeTag</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">FilePath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#application.File" title="Permalink to this definition">¶</a></dt>
+<dd><p>File class which has several fields specifying each object.</p>
+<dl class="py method">
+<dt id="application.File.change_values">
+<code class="sig-name descname"><span class="pre">change_values</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">FileWidget</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">TypeTag</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">FilePath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">FileName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">EditStatus</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#application.File.change_values" title="Permalink to this definition">¶</a></dt>
+<dd><p>Change values of the file specifications.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="application.Interface">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">application.</span></code><code class="sig-name descname"><span class="pre">Interface</span></code><a class="headerlink" href="#application.Interface" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class which stores current program settings.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="application.JsonTheme">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">application.</span></code><code class="sig-name descname"><span class="pre">JsonTheme</span></code><a class="headerlink" href="#application.JsonTheme" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for .json file that contains themes configuration.</p>
+<dl class="py method">
+<dt id="application.JsonTheme.check">
+<code class="sig-name descname"><span class="pre">check</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#application.JsonTheme.check" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check whether the theme.json file exists and is valid. If it doesn’t - (re)creates it.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="application.JsonTheme.read">
+<code class="sig-name descname"><span class="pre">read</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#application.JsonTheme.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read the json file. Specify the text, background and line numbers colors.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="application.Tabs">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">application.</span></code><code class="sig-name descname"><span class="pre">Tabs</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#application.Tabs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for tabs containing opened files.</p>
+<dl class="py method">
+<dt id="application.Tabs.add_new">
+<code class="sig-name descname"><span class="pre">add_new</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#application.Tabs.add_new" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add new tab with frame.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="application.Tabs.file_edit">
+<code class="sig-name descname"><span class="pre">file_edit</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#application.Tabs.file_edit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Change tab name when file is being edited.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="application.TextLineNumbers">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">application.</span></code><code class="sig-name descname"><span class="pre">TextLineNumbers</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#application.TextLineNumbers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Line numbers class based on tk.Canvas.</p>
+<dl class="py method">
+<dt id="application.TextLineNumbers.attach">
+<code class="sig-name descname"><span class="pre">attach</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text_widget</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#application.TextLineNumbers.attach" title="Permalink to this definition">¶</a></dt>
+<dd><p>Attach to the text widget.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="application.TextLineNumbers.linenumbers_change">
+<code class="sig-name descname"><span class="pre">linenumbers_change</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#application.TextLineNumbers.linenumbers_change" title="Permalink to this definition">¶</a></dt>
+<dd><p>Redraw the line numbering.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="application.TextLineNumbers.redraw">
+<code class="sig-name descname"><span class="pre">redraw</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#application.TextLineNumbers.redraw" title="Permalink to this definition">¶</a></dt>
+<dd><p>Redraw line numbers.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="application.TextLineNumbers.resize">
+<code class="sig-name descname"><span class="pre">resize</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#application.TextLineNumbers.resize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Change font size.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="#">Gavrix 2.0</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="menus.html">1. Main Menu</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="#">Documentation overview</a><ul>
+      <li>Next: <a href="intro.html" title="next chapter">Introduction</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Ilya Doroshenko, Roman Karpenkov.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.5.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
