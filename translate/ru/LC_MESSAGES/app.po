@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2021-06-08 01:55+0300\n"
+"POT-Creation-Date: 2021-06-08 08:55+0300\n"
 "PO-Revision-Date: 2021-06-08 01:55+0300\n"
 "Last-Translator: Roman Karpenkov <s90180038@gse.cs.msu.ru>\n"
 "Language: ru\n"
@@ -19,123 +19,123 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.9.1\n"
 
-#: app.py:465
+#: src/__main__.py:465
 msgid "New File"
 msgstr "Создать новый файл"
 
-#: app.py:467
+#: src/__main__.py:467
 msgid "Open File"
 msgstr "Открыть файл"
 
-#: app.py:468
+#: src/__main__.py:468
 msgid "Save"
 msgstr "Сохранить"
 
-#: app.py:469
+#: src/__main__.py:469
 msgid "Save as"
 msgstr "Сохранить как"
 
-#: app.py:470
+#: src/__main__.py:470
 msgid "Close File"
 msgstr "Закрыть файл"
 
-#: app.py:472
+#: src/__main__.py:472
 msgid "Open Folder"
 msgstr "Закрыть папку"
 
-#: app.py:474
+#: src/__main__.py:474
 msgid "Refresh"
 msgstr "Обновить проводник"
 
-#: app.py:475
+#: src/__main__.py:475
 msgid "Close Folder"
 msgstr "Закрыть папку"
 
-#: app.py:484 app.py:561
+#: src/__main__.py:484 src/__main__.py:561
 msgid "Undo"
 msgstr "Отменить"
 
-#: app.py:485 app.py:562
+#: src/__main__.py:485 src/__main__.py:562
 msgid "Redo"
 msgstr "Повторить"
 
-#: app.py:487 app.py:564
+#: src/__main__.py:487 src/__main__.py:564
 msgid "Cut"
 msgstr "Вырезать"
 
-#: app.py:488 app.py:565
+#: src/__main__.py:488 src/__main__.py:565
 msgid "Copy"
 msgstr "Копировать"
 
-#: app.py:489 app.py:566
+#: src/__main__.py:489 src/__main__.py:566
 msgid "Paste"
 msgstr "Вставить"
 
-#: app.py:490 app.py:567
+#: src/__main__.py:490 src/__main__.py:567
 msgid "Delete"
 msgstr "Удалить"
 
-#: app.py:491 app.py:569
+#: src/__main__.py:491 src/__main__.py:569
 msgid "Select All"
 msgstr "Выбрать всё"
 
-#: app.py:527 app.py:892
+#: src/__main__.py:527 src/__main__.py:891
 msgid "Scale: "
 msgstr "Масштаб: "
 
-#: app.py:529
+#: src/__main__.py:529
 msgid "Theme"
 msgstr "Тема"
 
-#: app.py:531 app.py:961
+#: src/__main__.py:531 src/__main__.py:961
 msgid "Gavrix"
 msgstr "Гаврикс"
 
-#: app.py:532
+#: src/__main__.py:532
 msgid "Edit"
 msgstr "Редактировать"
 
-#: app.py:533 app.py:731 app.py:778
+#: src/__main__.py:533 src/__main__.py:731 src/__main__.py:778
 msgid "Find"
 msgstr "Найти"
 
-#: app.py:534
+#: src/__main__.py:534
 msgid "View"
 msgstr "Вид"
 
-#: app.py:544 app.py:672
+#: src/__main__.py:544 src/__main__.py:672
 msgid "About"
 msgstr "О программе"
 
-#: app.py:687
+#: src/__main__.py:687
 msgid "Developed by"
 msgstr "Команда разработчиков:"
 
-#: app.py:693
+#: src/__main__.py:693
 msgid "Ilya Doroshenko [github: fickmann]"
 msgstr "Илья Дорошенко [github: fickmann]"
 
-#: app.py:705
+#: src/__main__.py:705
 msgid "Roman Karpenkov [github: warnachinka]"
 msgstr "Роман Карпенков [github: warnachinka]"
 
-#: app.py:754
+#: src/__main__.py:754
 msgid "Find: "
 msgstr "Найти:"
 
-#: app.py:760
+#: src/__main__.py:760
 msgid "Replace: "
 msgstr "Заменить на:"
 
-#: app.py:784
+#: src/__main__.py:784
 msgid "Replace"
 msgstr "Заменить"
 
-#: app.py:845
+#: src/__main__.py:845
 msgid "Restart required"
 msgstr "Требуется перезапуск"
 
-#: app.py:845
+#: src/__main__.py:845
 msgid "Do you want to restart now?"
 msgstr "Перезапустить программу сейчас?"
 
