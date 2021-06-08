@@ -22,7 +22,7 @@ The Gavrix has the following sub-items:
 2. Edit – menu for interactions with the text field.
 3. Search – the function of finding the necessary text in the file and then replacing it, if necessary.
 4. View – the menu of settings of the external view of the program (selection of the theme and the scale of the text).
-5. O – function for displaying a pop-up window with the names of the developers.
+5. About – function for displaying a pop-up window with the names of the developers.
 
 ## Pop-up Menu
 When you right-click on the text field, a pop-up menu appears, whose items copy "Edit" from the main menu.
